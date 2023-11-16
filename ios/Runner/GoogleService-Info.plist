@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyAOl5BCpQDgukSrMMQbl7e8DL5A7DsP0gQ</string>
+	<key>GCM_SENDER_ID</key>
+	<string>159217976558</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.rythm</string>
+	<key>PROJECT_ID</key>
+	<string>fir-auth-15f4e</string>
+	<key>STORAGE_BUCKET</key>
+	<string>fir-auth-15f4e.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:159217976558:ios:f67366cb63014a0e6b9fff</string>
+	<key>DATABASE_URL</key>
+	<string>https://fir-auth-15f4e-default-rtdb.asia-southeast1.firebasedatabase.app</string>
+</dict>
+</plist>
