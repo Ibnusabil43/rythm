@@ -62,15 +62,15 @@ class _AudioPlayerScreenState extends State<Play> {
     super.initState();
     _audioPlayer = AudioPlayer();
     List<AudioSource> audioQuery = [];
-    for (var i = 0; i < widget.listSong.length; i++) {
-      audioQuery
-          .add(AudioSource.uri(Uri.parse('asset:///' + widget.listSong[i].song),
-              tag: MediaItem(
-                id: widget.listSong[i].id,
-                title: widget.listSong[i].title,
-                artist: widget.listSong[i].artist,
-                artUri: Uri.parse(widget.listSong[i].image),
-              )));
+    for (int i = 0; i < widget.listSong.length; i++) {
+      audioQuery.add(AudioSource.uri(Uri.parse(widget.listSong[i].song),
+          tag: MediaItem(
+            id: widget.listSong[i].id,
+            album: widget.listSong[i].title,
+            title: widget.listSong[i].title,
+            artist: widget.listSong[i].artist,
+            artUri: Uri.parse(widget.listSong[i].image),
+          )));
     }
 
     _init(audioQuery);
@@ -321,7 +321,7 @@ class MediaMetadata extends StatelessWidget {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(10),
-          child: Image.asset(
+          child: Image.network(
             imageUrl,
             height: 280,
             width: 280,

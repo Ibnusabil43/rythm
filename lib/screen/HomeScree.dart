@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:rythm/FtechFromFirebase/FtechFromFirebase.dart';
 import 'package:rythm/providers/songProvider.dart';
 import 'package:rythm/screen/GenreList.dart';
 import 'package:rythm/screen/Play.dart';
@@ -13,6 +15,23 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _initializeSongs();
+  }
+
+  void _initializeSongs() async {
+    try {
+      songArr = await ftechSongsFromFirebase();
+      print("Songs fetched successfully:");
+      // print(songArr);
+      setState(() {});
+    } catch (e) {
+      print("Error fetching songs: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -265,10 +284,23 @@ class lastPlayed extends StatelessWidget {
               InkWell(
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return Play(
+                    //songArr = context.watch<SongProvider>().songArray;
+                    print(songArr);
+                    if (songArr.isNotEmpty && currIdx < songArr.length) {
+                      return Play(
                         listSong: songArr,
                         song: songArr[currIdx],
-                        currIndex: currIdx);
+                        currIndex: currIdx,
+                      );
+                    } else {
+                      // Handle the case where the list is empty or the index is out of bounds
+                      // You can show an error message or navigate to a default screen.
+                      return Scaffold(
+                        body: Center(
+                          child: Text('Error: Invalid index or empty list'),
+                        ),
+                      );
+                    }
                   }));
                 },
                 child: Container(
@@ -276,7 +308,7 @@ class lastPlayed extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       ClipRRect(
-                        child: Image.asset(
+                        child: Image.network(
                           iniListLagu.image,
                           height: 60,
                           width: 60,

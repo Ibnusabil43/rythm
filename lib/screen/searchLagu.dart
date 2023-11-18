@@ -154,7 +154,7 @@ class songSearchResult extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       ClipRRect(
-                        child: Image.asset(
+                        child: Image.network(
                           iniListLagu.image,
                           height: 60,
                           width: 60,

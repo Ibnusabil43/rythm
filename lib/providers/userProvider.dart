@@ -21,6 +21,10 @@ class UsersProvider extends ChangeNotifier {
     this.profileImage = "",
   });
 
+  String getid() {
+    return id;
+  }
+
   void tambahPlaylistBaru({
     required String namePlaylist,
     required String descPlaylist,
