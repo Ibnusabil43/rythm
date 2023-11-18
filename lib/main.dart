@@ -1,10 +1,12 @@
 //import 'package:firebase_core/firebase_core.dart';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:rythm/BottomNavBar/BottomNavigationBar.dart';
+import 'package:rythm/firebase_options.dart';
+import 'package:rythm/screen/welcome.dart';
 import '../screen/songListToAdd.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:flutter/material.dart';
-import '../screen/home.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/userProvider.dart';
@@ -16,6 +18,10 @@ Future<void> main() async {
     androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
     androidNotificationChannelName: 'Audio playback',
     androidNotificationOngoing: true,
+  );
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
   );
   //WidgetsFlutterBinding.ensureInitialized();
   //await Firebase.initializeApp(
@@ -46,7 +52,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Rythm',
         theme: ThemeData(fontFamily: 'Poppins'),
-        home: BottomNavbar(), // Gantilah Home() dengan widget utama Anda
+        home: welcome(), // Gantilah Home() dengan widget utama Anda
       ),
     );
   }

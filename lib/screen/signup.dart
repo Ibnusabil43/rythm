@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:rythm/screen/HomeScree.dart';
 import 'package:rythm/screen/popupScreen.dart';
-import '../screen/home.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rythm/BottomNavBar/BottomNavigationBar.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({Key? key});
@@ -12,8 +14,9 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   bool showSpinner = false;
-  String email = '';
-  String password = '';
+  final email = TextEditingController();
+  final password = TextEditingController();
+  final username = TextEditingController();
   FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
@@ -117,34 +120,55 @@ class _SignUpState extends State<SignUp> {
                     setState(() {
                       showSpinner = true;
                     });
-
                     try {
-                      await _auth.createUserWithEmailAndPassword(
-                        email: email,
-                        password: password,
+                      final UserCredential =
+                          await _auth.createUserWithEmailAndPassword(
+                        email: email.text.trim(),
+                        password: password.text.trim(),
                       );
-                      showSpinner = false;
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                home()), // Assuming you have a Home widget.
-                      );
+                      final user = UserCredential.user;
+                      if (user != null) {
+                        CollectionReference collRef =
+                            FirebaseFirestore.instance.collection("users");
+                        collRef.add({
+                          'email': email.text,
+                          'username': username.text,
+                        });
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => BottomNavbar(),
+                          ),
+                        );
+                        print("Akun baeerhasil dibuat");
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomeScreen(),
+                          ),
+                        );
+                      } else {
+                        print("Gagal membuat akun");
+                      }
                     } catch (e) {
-                      // Handle errors here, e.g., show a snackbar with an error message.
                       print("Error: $e");
-                      String error = e.toString();
-                      int index = error.indexOf(']');
-                      String errorMessages =
-                          error.substring(index + 2, error.length);
-                      showSpinner =
-                          false; // Ensure spinner is turned off in case of an error.
+                      String errorMessage = e.toString();
+                      int index = errorMessage.indexOf(']');
+                      String finalErrorMessage = errorMessage.substring(
+                          index + 2, errorMessage.length);
                       showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return popUpWarning(
-                                errorMessage: errorMessages, status: "error");
-                          });
+                        context: context,
+                        builder: (BuildContext context) {
+                          return popUpWarning(
+                            errorMessage: finalErrorMessage,
+                            status: "error",
+                          );
+                        },
+                      );
+                    } finally {
+                      setState(() {
+                        showSpinner = false;
+                      });
                     }
                   },
                   child: Container(
@@ -186,6 +210,11 @@ class _SignUpState extends State<SignUp> {
       ),
       padding: EdgeInsets.symmetric(horizontal: 5),
       child: TextField(
+        onChanged: (value) {
+          setState(() {
+            username.text = value;
+          });
+        },
         style: TextStyle(color: Color(0xFFD2AFFF)),
         decoration: InputDecoration(
           contentPadding: EdgeInsets.all(4),
@@ -219,7 +248,7 @@ class _SignUpState extends State<SignUp> {
         keyboardType: TextInputType.emailAddress,
         onChanged: (value) {
           setState(() {
-            email = value;
+            email.text = value;
           });
         },
       ),
@@ -246,7 +275,7 @@ class _SignUpState extends State<SignUp> {
         obscureText: true,
         onChanged: (value) {
           setState(() {
-            password = value;
+            password.text = value;
           });
         },
       ),

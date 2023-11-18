@@ -1,6 +1,11 @@
-import '../screen/home.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:rythm/BottomNavBar/BottomNavigationBar.dart';
+import 'package:rythm/providers/songProvider.dart';
+import 'package:rythm/screen/HomeScree.dart';
+import 'package:rythm/screen/popupScreen.dart';
 import '../screen/welcome.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LogIn extends StatefulWidget {
   const LogIn({super.key});
@@ -10,12 +15,17 @@ class LogIn extends StatefulWidget {
 }
 
 class _loginstate extends State<LogIn> {
+  bool showSpinner = false;
+  final _auth = FirebaseAuth.instance;
+  final password = TextEditingController();
+  final email = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFF1C1C27),
       body: Container(
-        padding: EdgeInsets.only(top: 40, left: 20, right: 20),
+        padding: EdgeInsets.only(top: 40, left: 19, right: 19),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -90,11 +100,36 @@ class _loginstate extends State<LogIn> {
                   width: 86,
                 ),
                 InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => home()),
-                    );
+                  onTap: () async {
+                    setState(() {
+                      showSpinner = true;
+                    });
+                    try {
+                      final user = await _auth.signInWithEmailAndPassword(
+                          email: email.text, password: password.text);
+                      if (user != null) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => BottomNavbar()),
+                        );
+                      }
+                      setState(() {
+                        showSpinner = false;
+                      });
+                    } catch (e) {
+                      print(e);
+                      String finalErrorMessage = "Email atau Password Salah";
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return popUpWarning(
+                            errorMessage: finalErrorMessage,
+                            status: "error",
+                          );
+                        },
+                      );
+                    }
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
@@ -154,6 +189,9 @@ class _loginstate extends State<LogIn> {
       ),
       padding: EdgeInsets.symmetric(horizontal: 5),
       child: TextField(
+        onChanged: (value) {
+          email.text = value.trim();
+        },
         style: TextStyle(color: Color(0xFFD2AFFF)),
         decoration: InputDecoration(
             contentPadding: EdgeInsets.all(4),
@@ -174,6 +212,9 @@ class _loginstate extends State<LogIn> {
       ),
       padding: EdgeInsets.symmetric(horizontal: 5),
       child: TextField(
+        onChanged: (value) {
+          password.text = value.trim();
+        },
         style: TextStyle(color: Color(0xFFD2AFFF)),
         decoration: InputDecoration(
             contentPadding: EdgeInsets.all(4),
@@ -182,6 +223,7 @@ class _loginstate extends State<LogIn> {
               color: Color(0xFFD2AFFF).withOpacity(0.5),
             ),
             border: InputBorder.none),
+        obscureText: true,
       ),
     );
   }
