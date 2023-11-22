@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rythm/FtechFromFirebase/FetchSonginPlaylistFromFirebase.dart';
 import 'package:rythm/model/User.dart';
 import 'package:rythm/providers/userProvider.dart';
@@ -24,22 +25,43 @@ class playlist1 extends StatefulWidget {
 }
 
 class _playlist1State extends State<playlist1> {
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _initializeSongs();
-  // }
+  List<SongProvider> songArr = [];
+  @override
+  void initState() {
+    super.initState();
+    _initializeSongs();
+  }
 
-  // void _initializeSongs() async {
-  //   try {
-  //     widget.iniDaftarPlaylist.ftechSonginPlaylistFromFirebase();
-  //     print("Songs fetched successfully:");
-  //     // print(songArr);
-  //     setState(() {});
-  //   } catch (e) {
-  //     print("Error fetching songs: $e");
-  //   }
-  // }
+  void _initializeSongs() async {
+    try {
+      widget.iniDaftarPlaylist.ftechSonginPlaylistFromFirebase();
+      final collection = FirebaseFirestore.instance.collection('songs');
+      print("tesssss");
+      if (widget.iniDaftarPlaylist.tempSong.isEmpty) {
+        songArr = [];
+      } else {
+        QuerySnapshot songsSnapshot = await collection
+            .where(FieldPath.documentId,
+                whereIn: widget.iniDaftarPlaylist.tempSong)
+            .get();
+        print("SongArr doc");
+        var t = songsSnapshot.docs.toList();
+        print(t);
+
+        songArr = List.from(
+            songsSnapshot.docs.map((doc) => SongProvider.fromSnapshot(doc)));
+      }
+      print("Songs fetched successfully:");
+      // print(songArr);
+      setState(() {});
+    } catch (e) {
+      print("Error fetching songs: $e");
+    }
+  }
+
+  void addLagu(SongProvider song) {
+    songArr.add(song);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -165,18 +187,9 @@ class _playlist1State extends State<playlist1> {
               ),
               Expanded(
                 child: ListView.builder(
-                  itemCount: context
-                      .watch<UsersProvider>()
-                      .playListArr[widget.currIdx]
-                      .songList
-                      .length,
+                  itemCount: songArr.length,
                   itemBuilder: ((context, index) {
-                    if (index <=
-                        context
-                            .watch<UsersProvider>()
-                            .playListArr[widget.currIdx]
-                            .songList
-                            .length) {
+                    if (index <= songArr.length) {
                       return songListinPlaylist(
                         iniDaftarPlaylist: context
                             .watch<UsersProvider>()

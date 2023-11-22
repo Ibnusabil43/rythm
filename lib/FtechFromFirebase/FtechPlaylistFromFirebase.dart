@@ -21,7 +21,7 @@ Future<List<PlayListProvider>> ftechPlaylistFromFirebase() async {
       image: ListData["image"],
       desc: ListData["desc"],
     );
-    // List.setSongList((ListData["Songs"]));
+    List.setSongList((ListData["Songs"]));
     playlistArr.add(List);
   });
   return playlistArr;

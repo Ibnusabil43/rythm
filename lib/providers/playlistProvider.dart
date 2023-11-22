@@ -30,31 +30,22 @@ class PlayListProvider extends ChangeNotifier {
   void ftechSonginPlaylistFromFirebase() async {
     // List<SongProvider> songArr = [];
     final collection = FirebaseFirestore.instance.collection('songs');
-    // print("tesssss");
+    print("tesssss");
+    if (this.tempSong.isEmpty) {
+      this.songList = [];
+      notifyListeners();
+    } else {
+      QuerySnapshot songsSnapshot = await collection
+          .where(FieldPath.documentId, whereIn: this.tempSong)
+          .get();
+      print("SongArr doc");
+      var t = songsSnapshot.docs.toList();
+      print(t);
 
-    QuerySnapshot songsSnapshot = await collection
-        .where(FieldPath.documentId, whereIn: this.tempSong)
-        .get();
-    print("SongArr doc");
-    var t = songsSnapshot.docs.toList();
-    print(t[0].data());
-    // songsSnapshot.docs.forEach((doc) {
-    //   Map<String, dynamic> songData = doc.data() as Map<String, dynamic>;
+      this.songList = List.from(
+          songsSnapshot.docs.map((doc) => SongProvider.fromSnapshot(doc)));
 
-    //   SongProvider song = SongProvider(
-    //     id: doc.id,
-    //     title: songData['song_name'],
-    //     artist: songData['artist_name'],
-    //     image: songData['image_url'],
-    //     song: songData['song_url'],
-    //     genre: songData['song_genre'],
-    //   );
-    //   songList.add(song);
-    // });
-    this.songList = List.from(
-        songsSnapshot.docs.map((doc) => SongProvider.fromSnapshot(doc)));
-    // print("SongArr playlist");
-    // print(songList);
-    notifyListeners();
+      notifyListeners();
+    }
   }
 }

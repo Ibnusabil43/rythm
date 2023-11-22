@@ -85,6 +85,31 @@ class UsersProvider extends ChangeNotifier {
     }
   }
 
+  void addLagu(
+      {required PlayListProvider playlist, required SongProvider song}) async {
+    var ref = FirebaseFirestore.instance.collection('songs').doc(song.id);
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection("playlist")
+        .get()
+        .then(
+      (querySnapshot) async {
+        for (var docSnapshot in querySnapshot.docs) {
+          if (docSnapshot.data()["name"] == playlist.name &&
+              docSnapshot.data()["desc"] == playlist.desc &&
+              docSnapshot.data()["image"] == playlist.image) {
+            docSnapshot.reference.update({
+              "Songs": FieldValue.arrayUnion([ref])
+            });
+          }
+        }
+      },
+      onError: (e) => print("Error completing: $e"),
+    );
+    notifyListeners();
+  }
+
   void deletePlaylistoln({
     required PlayListProvider playlist,
   }) async {
@@ -98,11 +123,6 @@ class UsersProvider extends ChangeNotifier {
         for (var docSnapshot in querySnapshot.docs) {
           if (docSnapshot.data()["name"] == playlist.name &&
               docSnapshot.data()["desc"] == playlist.desc) {
-            print("tesssssssssss");
-            // print("ini image url dari database");
-            // print(docSnapshot.data()['imageUrl']);
-            // print("ini image url dari lokal");
-            // print(playlist.image);
             String imagePlaylist = docSnapshot.data()["imageName"];
             final desertRef = FirebaseStorage.instance
                 .ref()

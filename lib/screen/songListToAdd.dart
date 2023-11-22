@@ -132,8 +132,10 @@ class _SongWidgetState extends State<SongWidget> {
           setState(() {
             isAdded = !isAdded; // Toggle the added state
           });
-          context.read<UsersProvider>().tambahLagukePlaylist(
-              playlist: widget.playlist, song: widget.song);
+          context
+              .read<UsersProvider>()
+              .addLagu(playlist: widget.playlist, song: widget.song);
+          widget.playlist.addSong(widget.song);
           Navigator.pop(context);
         },
         child:

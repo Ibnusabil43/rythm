@@ -82,6 +82,7 @@ class _addPlaylistState extends State<addPlaylist> {
         'desc': descPlaylist.text,
         'image': imageUrl.toString(),
         'imageName': target,
+        'Songs': [],
       });
     } catch (e) {
       print('Error copying file: $e');
