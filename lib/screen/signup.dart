@@ -126,14 +126,15 @@ class _SignUpState extends State<SignUp> {
                         email: email.text.trim(),
                         password: password.text.trim(),
                       );
-                      final user = UserCredential.user;
+                      final user = UserCredential.user!.uid;
                       if (user != null) {
                         CollectionReference collRef =
                             FirebaseFirestore.instance.collection("users");
-                        collRef.add({
+                        collRef.doc(user).set({
                           'email': email.text,
                           'username': username.text,
                         });
+                        FirebaseAuth.instance.signOut();
                         Navigator.push(
                           context,
                           MaterialPageRoute(

@@ -1,5 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:rythm/FtechFromFirebase/FtechPlaylistFromFirebase.dart';
 import '../providers/playlistProvider.dart';
 import 'package:rythm/providers/songProvider.dart';
 import 'package:uuid/uuid.dart';
@@ -12,7 +16,7 @@ class UsersProvider extends ChangeNotifier {
   String password;
   String profileImage;
   List<PlayListProvider> playListArr = [];
-
+  get getPlayListArr => playListArr;
   UsersProvider({
     this.id = "",
     this.email = "",
@@ -21,8 +25,27 @@ class UsersProvider extends ChangeNotifier {
     this.profileImage = "",
   });
 
-  String getid() {
-    return id;
+  void setid(String uid) {
+    this.id = uid;
+    print(id);
+  }
+
+  void fetchprofile() async {
+    final docprofile = FirebaseFirestore.instance.collection('users');
+    var doc = await docprofile.doc(id).get();
+
+    if (doc.exists) {
+      Map<String, dynamic> data = doc.data()!;
+      this.username = data['username'];
+      this.email = data['email'];
+      print(username);
+      notifyListeners();
+    }
+  }
+
+  void fetchPlaylist() async {
+    playListArr = await ftechPlaylistFromFirebase();
+    notifyListeners();
   }
 
   void tambahPlaylistBaru({
@@ -60,6 +83,39 @@ class UsersProvider extends ChangeNotifier {
         print('File lokal tidak ditemukan.');
       }
     }
+  }
+
+  void deletePlaylistoln({
+    required PlayListProvider playlist,
+  }) async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection("playlist")
+        .get()
+        .then(
+      (querySnapshot) async {
+        for (var docSnapshot in querySnapshot.docs) {
+          if (docSnapshot.data()["name"] == playlist.name &&
+              docSnapshot.data()["desc"] == playlist.desc) {
+            print("tesssssssssss");
+            // print("ini image url dari database");
+            // print(docSnapshot.data()['imageUrl']);
+            // print("ini image url dari lokal");
+            // print(playlist.image);
+            String imagePlaylist = docSnapshot.data()["imageName"];
+            final desertRef = FirebaseStorage.instance
+                .ref()
+                .child('playlist/' + imagePlaylist);
+            await desertRef.delete();
+            await docSnapshot.reference.delete();
+          }
+        }
+      },
+      onError: (e) => print("Error completing: $e"),
+    );
+    playListArr.remove(playlist);
+    notifyListeners();
   }
 
   void deletePlaylist({required PlayListProvider playlist}) async {

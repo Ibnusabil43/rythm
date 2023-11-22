@@ -1,3 +1,4 @@
+import 'package:rythm/FtechFromFirebase/FetchSonginPlaylistFromFirebase.dart';
 import 'package:rythm/model/User.dart';
 import 'package:rythm/providers/userProvider.dart';
 import '../providers/playlistProvider.dart';
@@ -23,6 +24,23 @@ class playlist1 extends StatefulWidget {
 }
 
 class _playlist1State extends State<playlist1> {
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _initializeSongs();
+  // }
+
+  // void _initializeSongs() async {
+  //   try {
+  //     widget.iniDaftarPlaylist.ftechSonginPlaylistFromFirebase();
+  //     print("Songs fetched successfully:");
+  //     // print(songArr);
+  //     setState(() {});
+  //   } catch (e) {
+  //     print("Error fetching songs: $e");
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,8 +93,8 @@ class _playlist1State extends State<playlist1> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           ClipRRect(
-                            child: Image.file(
-                              File(widget.iniDaftarPlaylist.image),
+                            child: Image.network(
+                              widget.iniDaftarPlaylist.image,
                               width: 250,
                               height: 250,
                               fit: BoxFit.cover,
@@ -134,7 +152,7 @@ class _playlist1State extends State<playlist1> {
                                 builder: (context) {
                                   return popUpWarning(
                                       errorMessage: "Playlist ini kosong",
-                                      status : "error");
+                                      status: "error");
                                 },
                               );
                             }
@@ -263,7 +281,7 @@ class songListinPlaylist extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       ClipRRect(
-                        child: Image.asset(
+                        child: Image.network(
                           iniDaftarPlaylist.songList[currIdx].image,
                           height: 60,
                           width: 60,

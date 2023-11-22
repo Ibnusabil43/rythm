@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:rythm/providers/songProvider.dart';
+import 'package:rythm/screen/HomeScree.dart';
 
 class SongGenre extends StatefulWidget {
   final String genreName;

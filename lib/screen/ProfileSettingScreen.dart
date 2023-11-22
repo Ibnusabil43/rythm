@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:rythm/screen/welcome.dart';
 import '../providers/songProvider.dart';
 import '../Screen/Play.dart';
 import 'package:provider/provider.dart';
@@ -101,6 +104,45 @@ class _ProfileSettingState extends State<ProfileSetting> {
                     color: Color(0xFFD2AFFF),
                   ),
                 ),
+              ],
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                InkWell(
+                    onTap: () {
+                      FirebaseAuth.instance.signOut();
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => welcome()));
+                    },
+                    child: Container(
+                      width: 200,
+                      height: 47,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Color(0xFFD2AFFF),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'LOG OUT',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )),
               ],
             ),
             SizedBox(

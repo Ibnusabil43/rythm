@@ -30,6 +30,10 @@ class _UploadSongState extends State<UploadSong> {
   String? selectedAudioFileName;
   final storageRef = FirebaseStorage.instance.ref();
   var imageUrl, songUrl;
+  // String fileImagepath = '';
+  // get target => fileImagepath.substring(fileImagepath.lastIndexOf('/') + 1);
+  // get imageref => FirebaseStorage.instance.ref().child('images/$target');
+
   // DatabaseReference ref = FirebaseDatabase.instance.ref("songs");
   // final imageref = FirebaseStorage.instance.ref().child('imagesSong.jpg');
   // final songref = FirebaseStorage.instance.ref().child('songs');
@@ -42,18 +46,19 @@ class _UploadSongState extends State<UploadSong> {
       final imageFileName = pickedFile.name;
       final imageFile = File(pickedFile.path);
       final localImage = File('${appDocDir.path}/$imageFileName');
-      String filepath = imageFile.path;
-      String target = filepath.substring(filepath.lastIndexOf('/') + 1);
-      final imageref = FirebaseStorage.instance.ref().child('images/$target');
-      File file = File(filepath);
+      // fileImagepath = imageFile.path;
+      // String target =
+      // fileImagepath.substring(fileImagepath.lastIndexOf('/') + 1);
+      // final imageref = FirebaseStorage.instance.ref().child('images/$target');
+      // File file = File(fileImagepath);
       try {
         await imageFile.copy(localImage.path);
-        await imageref.putFile(
-            file,
-            SettableMetadata(
-              contentType: 'image/jpeg',
-            ));
-        imageUrl = await imageref.getDownloadURL();
+        // await imageref.putFile(
+        //     file,
+        //     SettableMetadata(
+        //       contentType: 'image/jpeg',
+        //     ));
+        // imageUrl = await imageref.getDownloadURL();
         setState(() {
           selectedImage = localImage;
           selectedImageFileName = imageFileName;
@@ -61,6 +66,25 @@ class _UploadSongState extends State<UploadSong> {
       } catch (e) {
         print('Error copying file: $e');
       }
+    }
+  }
+
+  Future<void> UpImage() async {
+    String fileImagepath = selectedImage!.path;
+    String target = fileImagepath.substring(fileImagepath.lastIndexOf('/') + 1);
+    final imageref = FirebaseStorage.instance.ref().child('images/$target');
+    File file = File(fileImagepath);
+    try {
+      await imageref.putFile(
+          file,
+          SettableMetadata(
+            contentType: 'image/jpeg',
+          ));
+      imageUrl = await imageref.getDownloadURL();
+      print("URL IMAGE");
+      print(imageUrl);
+    } catch (e) {
+      print('Error copying file: $e');
     }
   }
 
@@ -77,16 +101,16 @@ class _UploadSongState extends State<UploadSong> {
         final audioFile = File(result.files.single.path!);
         final audioFileName = result.files.single.name!;
         final localAudioFile = File('${appDocDir.path}/$audioFileName');
-        String filepath = audioFile.path;
-        String target = filepath.substring(filepath.lastIndexOf('/') + 1);
-        final songref = FirebaseStorage.instance.ref().child('songs/$target');
+        // String filepath = audioFile.path;
+        // String target = filepath.substring(filepath.lastIndexOf('/') + 1);
+        // final songref = FirebaseStorage.instance.ref().child('songs/$target');
         await audioFile.copy(localAudioFile.path);
-        await songref.putFile(
-            audioFile,
-            SettableMetadata(
-              contentType: 'audio/mpeg',
-            ));
-        songUrl = await songref.getDownloadURL();
+        // await songref.putFile(
+        //     audioFile,
+        //     SettableMetadata(
+        //       contentType: 'audio/mpeg',
+        //     ));
+        // songUrl = await songref.getDownloadURL();
 
         setState(() {
           selectedAudioFile = localAudioFile;
@@ -98,19 +122,23 @@ class _UploadSongState extends State<UploadSong> {
     }
   }
 
-  Finalupload() {
-    var data = {
-      "song_name": songName.text,
-      "artist_name": artistName.text,
-      "song_genre": genreName.text,
-      "image_url": imageUrl.toString(),
-      "song_url": songUrl.toString(),
-    };
-    firestoreinstance.collection("tes").doc().set(data).then((value) {
-      print("berhasil");
-    }).catchError((error) {
-      print(error);
-    });
+  Future<void> UpSong() async {
+    String filepath = selectedAudioFile!.path;
+    String target = filepath.substring(filepath.lastIndexOf('/') + 1);
+    final songref = FirebaseStorage.instance.ref().child('songs/$target');
+    File file = File(filepath);
+    try {
+      await songref.putFile(
+          file,
+          SettableMetadata(
+            contentType: 'audio/mpeg',
+          ));
+      songUrl = await songref.getDownloadURL();
+      print("URL SONG");
+      print(songUrl);
+    } catch (e) {
+      print('Error copying file: $e');
+    }
   }
 
   @override
@@ -300,6 +328,8 @@ class _UploadSongState extends State<UploadSong> {
                           },
                         );
                       } else {
+                        await UpImage();
+                        await UpSong();
                         CollectionReference collRef =
                             FirebaseFirestore.instance.collection("songs");
                         collRef.add({
@@ -308,6 +338,16 @@ class _UploadSongState extends State<UploadSong> {
                           "song_genre": genreName.text,
                           "image_url": imageUrl.toString(),
                           "song_url": songUrl.toString(),
+                        });
+                        setState(() {
+                          songName.text = '';
+                          artistName.text = '';
+                          genreName.text = '';
+                          selectedGenre = 'Pilih Genre';
+                          selectedImage = null;
+                          selectedImageFileName = null;
+                          selectedAudioFile = null;
+                          selectedAudioFileName = null;
                         });
                         showDialog(
                           context: context,

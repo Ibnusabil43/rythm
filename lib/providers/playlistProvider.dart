@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rythm/providers/songProvider.dart';
 
@@ -6,6 +7,7 @@ class PlayListProvider extends ChangeNotifier {
   String name;
   String image;
   String desc;
+  List<dynamic> tempSong = [];
   List<SongProvider> songList = [];
 
   PlayListProvider({
@@ -14,4 +16,45 @@ class PlayListProvider extends ChangeNotifier {
     this.image = "",
     this.desc = "",
   });
+
+  void addSong(SongProvider song) {
+    songList.add(song);
+    notifyListeners();
+  }
+
+  void setSongList(List<dynamic> songList) {
+    this.tempSong = songList;
+    notifyListeners();
+  }
+
+  void ftechSonginPlaylistFromFirebase() async {
+    // List<SongProvider> songArr = [];
+    final collection = FirebaseFirestore.instance.collection('songs');
+    // print("tesssss");
+
+    QuerySnapshot songsSnapshot = await collection
+        .where(FieldPath.documentId, whereIn: this.tempSong)
+        .get();
+    print("SongArr doc");
+    var t = songsSnapshot.docs.toList();
+    print(t[0].data());
+    // songsSnapshot.docs.forEach((doc) {
+    //   Map<String, dynamic> songData = doc.data() as Map<String, dynamic>;
+
+    //   SongProvider song = SongProvider(
+    //     id: doc.id,
+    //     title: songData['song_name'],
+    //     artist: songData['artist_name'],
+    //     image: songData['image_url'],
+    //     song: songData['song_url'],
+    //     genre: songData['song_genre'],
+    //   );
+    //   songList.add(song);
+    // });
+    this.songList = List.from(
+        songsSnapshot.docs.map((doc) => SongProvider.fromSnapshot(doc)));
+    // print("SongArr playlist");
+    // print(songList);
+    notifyListeners();
+  }
 }

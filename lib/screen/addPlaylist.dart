@@ -1,10 +1,14 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../providers/userProvider.dart';
 import 'package:provider/provider.dart';
 import '../screen/popupScreen.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:uuid/uuid.dart';
 
 class addPlaylist extends StatefulWidget {
   const addPlaylist({super.key});
@@ -16,6 +20,8 @@ class addPlaylist extends StatefulWidget {
 class _addPlaylistState extends State<addPlaylist> {
   final namePlaylist = TextEditingController();
   final descPlaylist = TextEditingController();
+  final storageRef = FirebaseStorage.instance.ref();
+  var imageUrl;
   File? selectedImage;
   String?
       selectedImageFileName; // Tambahkan variabel untuk nama file gambar terpilih
@@ -28,8 +34,18 @@ class _addPlaylistState extends State<addPlaylist> {
       final imageFileName = pickedFile.name;
       final imageFile = File(pickedFile.path);
       final localImage = File('${appDocDir.path}/$imageFileName');
+      // String filepath = imageFile.path;
+      // String target = filepath.substring(filepath.lastIndexOf('/') + 1);
+      // final imageref = FirebaseStorage.instance.ref().child('images/$target');
+      // File file = File(filepath);
       try {
         await imageFile.copy(localImage.path);
+        // await imageref.putFile(
+        //     file,
+        //     SettableMetadata(
+        //       contentType: 'image/jpeg',
+        //     ));
+        // imageUrl = await imageref.getDownloadURL();
         setState(() {
           selectedImage = localImage;
           selectedImageFileName = imageFileName;
@@ -37,6 +53,38 @@ class _addPlaylistState extends State<addPlaylist> {
       } catch (e) {
         print('Error copying file: $e');
       }
+    }
+  }
+
+  Future<void> UpImage() async {
+    String fileImagepath = selectedImage!.path;
+    String target = fileImagepath.substring(fileImagepath.lastIndexOf('/') + 1);
+    final uuid = Uuid();
+    final uniqueId = uuid.v4();
+    target = uniqueId.toString() + target;
+    final imageref = FirebaseStorage.instance.ref().child('playlist/$target');
+    File file = File(fileImagepath);
+    try {
+      await imageref.putFile(
+          file,
+          SettableMetadata(
+            contentType: 'image/jpeg',
+          ));
+      imageUrl = await imageref.getDownloadURL();
+      print("URL IMAGE");
+      print(imageUrl);
+      CollectionReference playlist = FirebaseFirestore.instance
+          .collection("users")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection("playlist");
+      playlist.add({
+        'name': namePlaylist.text,
+        'desc': descPlaylist.text,
+        'image': imageUrl.toString(),
+        'imageName': target,
+      });
+    } catch (e) {
+      print('Error copying file: $e');
     }
   }
 
@@ -189,7 +237,7 @@ class _addPlaylistState extends State<addPlaylist> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 InkWell(
-                  onTap: () {
+                  onTap: () async {
                     if (namePlaylist.text.isEmpty ||
                         descPlaylist.text.isEmpty ||
                         selectedImage == null) {
@@ -203,12 +251,14 @@ class _addPlaylistState extends State<addPlaylist> {
                         },
                       );
                     } else {
-                      context.read<UsersProvider>().tambahPlaylistBaru(
-                            namePlaylist: namePlaylist.text,
-                            descPlaylist: descPlaylist.text,
-                            selectedImage: selectedImage,
-                            selectedImageFileName: selectedImageFileName,
-                          );
+                      await UpImage();
+                      // context.read<UsersProvider>().tambahPlaylistBaru(
+                      //       namePlaylist: namePlaylist.text,
+                      //       descPlaylist: descPlaylist.text,
+                      //       selectedImage: selectedImage,
+                      //       selectedImageFileName: selectedImageFileName,
+                      //     );
+
                       Navigator.pop(context);
                     }
                   },

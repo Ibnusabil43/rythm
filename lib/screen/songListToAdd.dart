@@ -143,7 +143,7 @@ class _SongWidgetState extends State<SongWidget> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 ClipRRect(
-                  child: Image.asset(
+                  child: Image.network(
                     widget.song.image,
                     height: 60,
                     width: 60,
