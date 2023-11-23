@@ -1,4 +1,7 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:rythm/providers/GenreProvider.dart';
 import 'package:file_picker/file_picker.dart';
@@ -20,21 +23,37 @@ class _UploadSongState extends State<UploadSong> {
   final genreName = TextEditingController();
   final songName = TextEditingController();
   final artistName = TextEditingController();
+  final firestoreinstance = FirebaseFirestore.instance;
   File? selectedImage;
   String? selectedImageFileName;
   File? selectedAudioFile;
   String? selectedAudioFileName;
+  final storageRef = FirebaseStorage.instance.ref();
+  var imageUrl, songUrl;
+  // DatabaseReference ref = FirebaseDatabase.instance.ref("songs");
+  // final imageref = FirebaseStorage.instance.ref().child('imagesSong.jpg');
+  // final songref = FirebaseStorage.instance.ref().child('songs');
 
   Future<void> getImage() async {
     final imagePicker = ImagePicker();
     final pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-      final appDocDir = await getApplicationDocumentsDirectory();
+      Directory appDocDir = await getApplicationDocumentsDirectory();
       final imageFileName = pickedFile.name;
       final imageFile = File(pickedFile.path);
       final localImage = File('${appDocDir.path}/$imageFileName');
+      String filepath = imageFile.path;
+      String target = filepath.substring(filepath.lastIndexOf('/') + 1);
+      final imageref = FirebaseStorage.instance.ref().child('images/$target');
+      File file = File(filepath);
       try {
         await imageFile.copy(localImage.path);
+        await imageref.putFile(
+            file,
+            SettableMetadata(
+              contentType: 'image/jpeg',
+            ));
+        imageUrl = await imageref.getDownloadURL();
         setState(() {
           selectedImage = localImage;
           selectedImageFileName = imageFileName;
@@ -58,7 +77,16 @@ class _UploadSongState extends State<UploadSong> {
         final audioFile = File(result.files.single.path!);
         final audioFileName = result.files.single.name!;
         final localAudioFile = File('${appDocDir.path}/$audioFileName');
+        String filepath = audioFile.path;
+        String target = filepath.substring(filepath.lastIndexOf('/') + 1);
+        final songref = FirebaseStorage.instance.ref().child('songs/$target');
         await audioFile.copy(localAudioFile.path);
+        await songref.putFile(
+            audioFile,
+            SettableMetadata(
+              contentType: 'audio/mpeg',
+            ));
+        songUrl = await songref.getDownloadURL();
 
         setState(() {
           selectedAudioFile = localAudioFile;
@@ -68,6 +96,21 @@ class _UploadSongState extends State<UploadSong> {
     } catch (e) {
       print('Error selecting audio file: $e');
     }
+  }
+
+  Finalupload() {
+    var data = {
+      "song_name": songName.text,
+      "artist_name": artistName.text,
+      "song_genre": genreName.text,
+      "image_url": imageUrl.toString(),
+      "song_url": songUrl.toString(),
+    };
+    firestoreinstance.collection("tes").doc().set(data).then((value) {
+      print("berhasil");
+    }).catchError((error) {
+      print(error);
+    });
   }
 
   @override
@@ -240,7 +283,7 @@ class _UploadSongState extends State<UploadSong> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   InkWell(
-                    onTap: () {
+                    onTap: () async {
                       if (songName.text.isEmpty ||
                           genreName.text.isEmpty ||
                           artistName.text.isEmpty ||
@@ -257,24 +300,14 @@ class _UploadSongState extends State<UploadSong> {
                           },
                         );
                       } else {
-                        context.read<SongProvider>().tambahSongBaru(
-                              title: songName.text,
-                              artist: artistName.text,
-                              genre: genreName.text,
-                              selectedImage: selectedImage,
-                              selectedImageFileName: selectedImageFileName,
-                              selectedAudioFile: selectedAudioFile,
-                              selectedAudioFileName: selectedAudioFileName,
-                            );
-                        setState(() {
-                          songName.text = '';
-                          artistName.text = '';
-                          genreName.text = '';
-                          selectedGenre = 'Pilih Genre';
-                          selectedImage = null;
-                          selectedImageFileName = null;
-                          selectedAudioFile = null;
-                          selectedAudioFileName = null;
+                        CollectionReference collRef =
+                            FirebaseFirestore.instance.collection("songs");
+                        collRef.add({
+                          "song_name": songName.text,
+                          "artist_name": artistName.text,
+                          "song_genre": genreName.text,
+                          "image_url": imageUrl.toString(),
+                          "song_url": songUrl.toString(),
                         });
                         showDialog(
                           context: context,
