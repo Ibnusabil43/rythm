@@ -85,31 +85,31 @@ class UsersProvider extends ChangeNotifier {
     }
   }
 
-  void addLagu(
-      {required PlayListProvider playlist, required SongProvider song}) async {
-    var ref = FirebaseFirestore.instance.collection('songs').doc(song.id);
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .collection("playlist")
-        .get()
-        .then(
-      (querySnapshot) async {
-        for (var docSnapshot in querySnapshot.docs) {
-          if (docSnapshot.data()["name"] == playlist.name &&
-              docSnapshot.data()["desc"] == playlist.desc &&
-              docSnapshot.data()["image"] == playlist.image) {
-            docSnapshot.reference.update({
-              "Songs": FieldValue.arrayUnion([ref])
-            });
-            playlist.songList.add(song);
-          }
-        }
-      },
-      onError: (e) => print("Error completing: $e"),
-    );
-    notifyListeners();
-  }
+  // void addLagu(
+  //     {required PlayListProvider playlist, required SongProvider song}) async {
+  //   var ref = FirebaseFirestore.instance.collection('songs').doc(song.id);
+  //   await FirebaseFirestore.instance
+  //       .collection('users')
+  //       .doc(FirebaseAuth.instance.currentUser!.uid)
+  //       .collection("playlist")
+  //       .get()
+  //       .then(
+  //     (querySnapshot) async {
+  //       for (var docSnapshot in querySnapshot.docs) {
+  //         if (docSnapshot.data()["name"] == playlist.name &&
+  //             docSnapshot.data()["desc"] == playlist.desc &&
+  //             docSnapshot.data()["image"] == playlist.image) {
+  //           docSnapshot.reference.update({
+  //             "Songs": FieldValue.arrayUnion([ref])
+  //           });
+  //           playlist.songList.add(song);
+  //         }
+  //       }
+  //     },
+  //     onError: (e) => print("Error completing: $e"),
+  //   );
+  //   notifyListeners();
+  // }
 
   void addLagu2({required String playlist, required SongProvider song}) async {
     var ref = FirebaseFirestore.instance.collection('songs').doc(song.id);
@@ -123,6 +123,22 @@ class UsersProvider extends ChangeNotifier {
     print("ref2$ref2");
     await ref2.update({
       "Songs": FieldValue.arrayUnion([ref])
+    });
+  }
+
+  void deleteLagu2(
+      {required String playlist, required SongProvider song}) async {
+    var ref = FirebaseFirestore.instance.collection('songs').doc(song.id);
+    var ref2 = FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection("playlist")
+        .doc(playlist);
+
+    print("ref$ref");
+    print("ref2$ref2");
+    await ref2.update({
+      "Songs": FieldValue.arrayRemove([ref])
     });
   }
 
@@ -165,9 +181,9 @@ class UsersProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void deleteLagudariPlaylist(
-      {required PlayListProvider playlist, required SongProvider song}) {
-    playlist.songList.remove(song);
-    notifyListeners();
-  }
+  // void deleteLagudariPlaylist(
+  //     {required PlayListProvider playlist, required SongProvider song}) {
+  //   playlist.songList.remove(song);
+  //   notifyListeners();
+  // }
 }
