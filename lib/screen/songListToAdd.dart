@@ -26,7 +26,7 @@ class _songListToAddState extends State<songListToAdd> {
             children: [
               InkWell(
                 onTap: () {
-                  Navigator.pop(context);
+                  Navigator.pop(context, " ");
                 },
                 child: Icon(
                   Icons.arrow_back_rounded,
@@ -132,11 +132,14 @@ class _SongWidgetState extends State<SongWidget> {
           setState(() {
             isAdded = !isAdded; // Toggle the added state
           });
+          // context
+          //     .read<UsersProvider>()
+          //     .addLagu(playlist: widget.playlist, song: widget.song);
+          // widget.playlist.addSong(widget.song);
           context
               .read<UsersProvider>()
-              .addLagu(playlist: widget.playlist, song: widget.song);
-          widget.playlist.addSong(widget.song);
-          Navigator.pop(context);
+              .addLagu2(playlist: widget.playlist.id, song: widget.song);
+          Navigator.pop(context, "addSong");
         },
         child:
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [

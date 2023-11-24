@@ -102,7 +102,7 @@ class _addPlaylistState extends State<addPlaylist> {
           children: [
             InkWell(
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pop(context, " ");
               },
               child: Icon(Icons.arrow_back_rounded,
                   color: Color(0xFFD2AFFF), size: 33),
@@ -261,7 +261,7 @@ class _addPlaylistState extends State<addPlaylist> {
                       //       selectedImageFileName: selectedImageFileName,
                       //     );
 
-                      Navigator.pop(context);
+                      Navigator.pop(context, "addPlaylist");
                       ftechPlaylistFromFirebase();
                     }
                   },
