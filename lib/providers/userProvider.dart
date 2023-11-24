@@ -102,12 +102,28 @@ class UsersProvider extends ChangeNotifier {
             docSnapshot.reference.update({
               "Songs": FieldValue.arrayUnion([ref])
             });
+            playlist.songList.add(song);
           }
         }
       },
       onError: (e) => print("Error completing: $e"),
     );
     notifyListeners();
+  }
+
+  void addLagu2({required String playlist, required SongProvider song}) async {
+    var ref = FirebaseFirestore.instance.collection('songs').doc(song.id);
+    var ref2 = FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection("playlist")
+        .doc(playlist);
+
+    print("ref$ref");
+    print("ref2$ref2");
+    await ref2.update({
+      "Songs": FieldValue.arrayUnion([ref])
+    });
   }
 
   void deletePlaylistoln({

@@ -3,7 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rythm/providers/playlistProvider.dart';
 import 'package:rythm/providers/songProvider.dart';
 
-void ftechSonginPlaylistFromFirebase(PlayListProvider NamaPlayList) async {
+Future<void> ftechSonginPlaylistFromFirebase(
+    PlayListProvider NamaPlayList) async {
   List<SongProvider> songArr = [];
   final collection = FirebaseFirestore.instance.collection('songs');
 

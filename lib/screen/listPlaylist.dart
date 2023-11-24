@@ -103,13 +103,16 @@ class _listPlaylistState extends State<listPlaylist> {
             bottom: 20,
             child: FloatingActionButton(
               backgroundColor: Color(0xFFD2AFFF),
-              onPressed: () {
-                Navigator.push(
+              onPressed: () async {
+                String status = await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => addPlaylist(),
                   ),
                 );
+                if (status == "addPlaylist") {
+                  context.read<UsersProvider>().fetchPlaylist();
+                }
               },
               child: Icon(
                 Icons.add_rounded,
