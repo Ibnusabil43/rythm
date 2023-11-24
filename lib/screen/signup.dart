@@ -18,186 +18,195 @@ class _SignUpState extends State<SignUp> {
   final password = TextEditingController();
   final username = TextEditingController();
   FirebaseAuth _auth = FirebaseAuth.instance;
+  bool _obscureText = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFF1C1C27),
-      body: Container(
-        padding: EdgeInsets.only(top: 40, left: 19, right: 19),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                InkWell(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Icon(
-                    Icons.arrow_back_rounded,
-                    color: Color(0xFFD2AFFF),
-                    size: 37,
-                  ),
-                ),
-                Text(
-                  'Daftar',
-                  style: TextStyle(
-                    color: Color(0xFFD2AFFF),
-                    fontSize: 40,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                SizedBox(
-                  width: 30,
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 95,
+            InkWell(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Icon(
+                Icons.arrow_back_rounded,
+                color: Color(0xFFD2AFFF),
+                size: 37,
+              ),
             ),
             Text(
-              'Nama',
+              'Daftar',
               style: TextStyle(
                 color: Color(0xFFD2AFFF),
-                fontSize: 20,
+                fontSize: 40,
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.w700,
-                height: 0,
               ),
             ),
             SizedBox(
-              height: 12,
+              width: 30,
             ),
-            formNama(),
-            SizedBox(
-              height: 39,
-            ),
-            Text(
-              'Email',
-              style: TextStyle(
-                color: Color(0xFFD2AFFF),
-                fontSize: 20,
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w700,
-                height: 0,
+          ],
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.only(left: 20, right: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 95,
               ),
-            ),
-            SizedBox(
-              height: 12,
-            ),
-            formEmail(),
-            SizedBox(
-              height: 39,
-            ),
-            Text(
-              'Password',
-              style: TextStyle(
-                color: Color(0xFFD2AFFF),
-                fontSize: 20,
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w700,
-                height: 0,
-              ),
-            ),
-            SizedBox(
-              height: 12,
-            ),
-            formPassword(),
-            SizedBox(
-              height: 53,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                SizedBox(
-                  width: 86,
+              Text(
+                'Nama',
+                style: TextStyle(
+                  color: Color(0xFFD2AFFF),
+                  fontSize: 20,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w700,
+                  height: 0,
                 ),
-                InkWell(
-                  onTap: () async {
-                    setState(() {
-                      showSpinner = true;
-                    });
-                    try {
-                      final UserCredential =
-                          await _auth.createUserWithEmailAndPassword(
-                        email: email.text.trim(),
-                        password: password.text.trim(),
-                      );
-                      final user = UserCredential.user!.uid;
-                      if (user != null) {
-                        CollectionReference collRef =
-                            FirebaseFirestore.instance.collection("users");
-                        collRef.doc(user).set({
-                          'email': email.text,
-                          'username': username.text,
-                        });
-                        FirebaseAuth.instance.signOut();
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => BottomNavbar(),
-                          ),
-                        );
-                        print("Akun baeerhasil dibuat");
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => HomeScreen(),
-                          ),
-                        );
-                      } else {
-                        print("Gagal membuat akun");
-                      }
-                    } catch (e) {
-                      print("Error: $e");
-                      String errorMessage = e.toString();
-                      int index = errorMessage.indexOf(']');
-                      String finalErrorMessage = errorMessage.substring(
-                          index + 2, errorMessage.length);
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return popUpWarning(
-                            errorMessage: finalErrorMessage,
-                            status: "error",
-                          );
-                        },
-                      );
-                    } finally {
-                      setState(() {
-                        showSpinner = false;
-                      });
-                    }
-                  },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+              ),
+              SizedBox(
+                height: 12,
+              ),
+              formNama(),
+              SizedBox(
+                height: 39,
+              ),
+              Text(
+                'Email',
+                style: TextStyle(
+                  color: Color(0xFFD2AFFF),
+                  fontSize: 20,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w700,
+                  height: 0,
+                ),
+              ),
+              SizedBox(
+                height: 12,
+              ),
+              formEmail(),
+              SizedBox(
+                height: 39,
+              ),
+              Text(
+                'Password',
+                style: TextStyle(
+                  color: Color(0xFFD2AFFF),
+                  fontSize: 20,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w700,
+                  height: 0,
+                ),
+              ),
+              SizedBox(
+                height: 12,
+              ),
+              formPassword(),
+              SizedBox(
+                height: 53,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
                     width: 86,
-                    height: 49,
-                    decoration: ShapeDecoration(
-                      color: Color(0xFFD2AFFF),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
+                  ),
+                  InkWell(
+                    onTap: () async {
+                      setState(() {
+                        showSpinner = true;
+                      });
+                      try {
+                        final UserCredential =
+                            await _auth.createUserWithEmailAndPassword(
+                          email: email.text.trim(),
+                          password: password.text.trim(),
+                        );
+                        final user = UserCredential.user!.uid;
+                        if (user != null) {
+                          CollectionReference collRef =
+                              FirebaseFirestore.instance.collection("users");
+                          collRef.doc(user).set({
+                            'email': email.text,
+                            'username': username.text,
+                          });
+                          FirebaseAuth.instance.signOut();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => BottomNavbar(),
+                            ),
+                          );
+                          print("Akun berhasil dibuat");
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => HomeScreen(),
+                            ),
+                          );
+                        } else {
+                          print("Gagal membuat akun");
+                        }
+                      } catch (e) {
+                        print("Error: $e");
+                        String errorMessage = e.toString();
+                        int index = errorMessage.indexOf(']');
+                        String finalErrorMessage = errorMessage.substring(
+                            index + 2, errorMessage.length);
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return popUpWarning(
+                              errorMessage: finalErrorMessage,
+                              status: "error",
+                            );
+                          },
+                        );
+                      } finally {
+                        setState(() {
+                          showSpinner = false;
+                        });
+                      }
+                    },
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                      width: 86,
+                      height: 49,
+                      decoration: ShapeDecoration(
+                        color: Color(0xFFD2AFFF),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
                       ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'Daftar',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w700,
+                      child: Center(
+                        child: Text(
+                          'Daftar',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            )
-          ],
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -263,7 +272,8 @@ class _SignUpState extends State<SignUp> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
       ),
       padding: EdgeInsets.symmetric(horizontal: 5),
-      child: TextField(
+      child: TextFormField(
+        textAlignVertical: TextAlignVertical.center,
         style: TextStyle(color: Color(0xFFD2AFFF)),
         decoration: InputDecoration(
           contentPadding: EdgeInsets.all(4),
@@ -272,8 +282,19 @@ class _SignUpState extends State<SignUp> {
             color: Color(0xFFD2AFFF).withOpacity(0.5),
           ),
           border: InputBorder.none,
+          suffixIcon: IconButton(
+            icon: Icon(
+              Icons.visibility,
+              color: Color(0xFFD2AFFF),
+            ),
+            onPressed: () {
+              setState(() {
+                _obscureText = !_obscureText;
+              });
+            },
+          ),
         ),
-        obscureText: true,
+        obscureText: _obscureText,
         onChanged: (value) {
           setState(() {
             password.text = value;

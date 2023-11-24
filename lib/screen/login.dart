@@ -19,146 +19,155 @@ class _loginstate extends State<LogIn> {
   final _auth = FirebaseAuth.instance;
   final password = TextEditingController();
   final email = TextEditingController();
+  bool _obscureText = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF1C1C27),
-      body: Container(
-        padding: EdgeInsets.only(top: 40, left: 19, right: 19),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        backgroundColor: Color(0xFF1C1C27),
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Icon(
+                  Icons.arrow_back_rounded,
+                  color: Color(0xFFD2AFFF),
+                  size: 37,
+                ),
+              ),
+              Text(
+                'Masuk',
+                style: TextStyle(
+                  color: Color(0xFFD2AFFF),
+                  fontSize: 40,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              SizedBox(
+                width: 30,
+              ),
+            ],
+          ),
+        ),
+        body: SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.only(left: 20, right: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                InkWell(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Icon(
-                    Icons.arrow_back_rounded,
-                    color: Color(0xFFD2AFFF),
-                    size: 37,
-                  ),
+                SizedBox(
+                  height: 95,
                 ),
                 Text(
-                  'Masuk',
+                  'Email',
                   style: TextStyle(
                     color: Color(0xFFD2AFFF),
-                    fontSize: 40,
+                    fontSize: 20,
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w700,
+                    height: 0,
                   ),
                 ),
                 SizedBox(
-                  width: 30,
+                  height: 12,
                 ),
-              ],
-            ),
-            SizedBox(
-              height: 95,
-            ),
-            Text(
-              'Email',
-              style: TextStyle(
-                color: Color(0xFFD2AFFF),
-                fontSize: 20,
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w700,
-                height: 0,
-              ),
-            ),
-            SizedBox(
-              height: 12,
-            ),
-            formEmail(),
-            SizedBox(
-              height: 39,
-            ),
-            Text(
-              'Password',
-              style: TextStyle(
-                color: Color(0xFFD2AFFF),
-                fontSize: 20,
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w700,
-                height: 0,
-              ),
-            ),
-            SizedBox(
-              height: 12,
-            ),
-            formPassword(),
-            SizedBox(
-              height: 53,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
+                formEmail(),
                 SizedBox(
-                  width: 86,
+                  height: 39,
                 ),
-                InkWell(
-                  onTap: () async {
-                    setState(() {
-                      showSpinner = true;
-                    });
-                    try {
-                      final user = await _auth.signInWithEmailAndPassword(
-                          email: email.text, password: password.text);
-                      if (user != null) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => BottomNavbar()),
-                        );
-                      }
-                      setState(() {
-                        showSpinner = false;
-                      });
-                    } catch (e) {
-                      print(e);
-                      String finalErrorMessage = "Email atau Password Salah";
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return popUpWarning(
-                            errorMessage: finalErrorMessage,
-                            status: "error",
+                Text(
+                  'Password',
+                  style: TextStyle(
+                    color: Color(0xFFD2AFFF),
+                    fontSize: 20,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w700,
+                    height: 0,
+                  ),
+                ),
+                SizedBox(
+                  height: 12,
+                ),
+                formPassword(),
+                SizedBox(
+                  height: 53,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      width: 86,
+                    ),
+                    InkWell(
+                      onTap: () async {
+                        setState(() {
+                          showSpinner = true;
+                        });
+                        try {
+                          final user = await _auth.signInWithEmailAndPassword(
+                              email: email.text, password: password.text);
+                          if (user != null) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => BottomNavbar()),
+                            );
+                          }
+                          setState(() {
+                            showSpinner = false;
+                          });
+                        } catch (e) {
+                          print(e);
+                          String finalErrorMessage =
+                              "Email atau Password Salah";
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return popUpWarning(
+                                errorMessage: finalErrorMessage,
+                                status: "error",
+                              );
+                            },
                           );
-                        },
-                      );
-                    }
-                  },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                    child: Center(
-                      child: Text(
-                        'Masuk',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w700,
+                        }
+                      },
+                      child: Container(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                        child: Center(
+                          child: Text(
+                            'Masuk',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                        width: 86,
+                        height: 49,
+                        decoration: ShapeDecoration(
+                          color: Color(0xFFD2AFFF),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5)),
                         ),
                       ),
                     ),
-                    width: 86,
-                    height: 49,
-                    decoration: ShapeDecoration(
-                      color: Color(0xFFD2AFFF),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5)),
-                    ),
-                  ),
-                ),
+                  ],
+                )
               ],
-            )
-          ],
-        ),
-      ),
-    );
+            ),
+          ),
+        ));
   }
 
   Widget formNama() {
@@ -211,19 +220,34 @@ class _loginstate extends State<LogIn> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
       ),
       padding: EdgeInsets.symmetric(horizontal: 5),
-      child: TextField(
-        onChanged: (value) {
-          password.text = value.trim();
-        },
+      child: TextFormField(
+        textAlignVertical: TextAlignVertical.center,
         style: TextStyle(color: Color(0xFFD2AFFF)),
         decoration: InputDecoration(
-            contentPadding: EdgeInsets.all(4),
-            hintText: 'Masukkan Password Anda',
-            hintStyle: TextStyle(
-              color: Color(0xFFD2AFFF).withOpacity(0.5),
+          contentPadding: EdgeInsets.all(4),
+          hintText: 'Masukkan Password Anda',
+          hintStyle: TextStyle(
+            color: Color(0xFFD2AFFF).withOpacity(0.5),
+          ),
+          border: InputBorder.none,
+          suffixIcon: IconButton(
+            icon: Icon(
+              Icons.visibility,
+              color: Color(0xFFD2AFFF),
             ),
-            border: InputBorder.none),
-        obscureText: true,
+            onPressed: () {
+              setState(() {
+                _obscureText = !_obscureText;
+              });
+            },
+          ),
+        ),
+        obscureText: _obscureText,
+        onChanged: (value) {
+          setState(() {
+            password.text = value;
+          });
+        },
       ),
     );
   }
