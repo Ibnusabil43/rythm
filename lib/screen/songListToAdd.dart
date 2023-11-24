@@ -152,6 +152,7 @@ class _SongWidgetState extends State<SongWidget> {
                     widget.song.image,
                     height: 60,
                     width: 60,
+                    fit: BoxFit.cover,
                   ),
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                 ),
