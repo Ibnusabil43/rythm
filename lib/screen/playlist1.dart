@@ -308,6 +308,7 @@ class songListinPlaylist extends StatelessWidget {
                           iniDaftarPlaylist.songList[currIdx].image,
                           height: 60,
                           width: 60,
+                          fit: BoxFit.cover,
                         ),
                         borderRadius: BorderRadius.all(Radius.circular(5)),
                       ),

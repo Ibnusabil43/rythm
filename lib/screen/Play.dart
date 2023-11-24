@@ -325,6 +325,7 @@ class MediaMetadata extends StatelessWidget {
             imageUrl,
             height: 280,
             width: 280,
+            fit: BoxFit.cover,
           ),
         ),
       ),
