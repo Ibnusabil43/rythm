@@ -165,8 +165,8 @@ class PlaylistSearchResult extends StatelessWidget {
             child: Row(
               children: [
                 ClipRRect(
-                  child: Image.file(
-                    File(iniDaftarPlaylist.image),
+                  child: Image.network(
+                    iniDaftarPlaylist.image,
                     width: 85,
                     height: 85,
                     fit: BoxFit.cover,
