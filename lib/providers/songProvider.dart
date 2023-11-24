@@ -23,6 +23,14 @@ class SongProvider extends ChangeNotifier {
       this.song = "",
       this.genre = ""});
 
+  SongProvider.fromSnapshot(snapshot)
+      : id = snapshot.id,
+        title = snapshot['song_name'],
+        artist = snapshot['artist_name'],
+        image = snapshot['image_url'],
+        song = snapshot['song_url'],
+        genre = snapshot['song_genre'];
+
   factory SongProvider.fromMap(Map<String, dynamic> map) {
     return SongProvider(
       id: map['id'],
@@ -35,58 +43,6 @@ class SongProvider extends ChangeNotifier {
   }
 
   List<SongProvider> songArray = [];
-
-  // void tambahSongBaru({
-  //   required String title,
-  //   required String artist,
-  //   required File? selectedImage,
-  //   required String? selectedImageFileName,
-  //   required File? selectedAudioFile,
-  //   required String? selectedAudioFileName,
-  //   required String genre,
-  // }) async {
-  //   final uuid = Uuid();
-
-  //   if (title.isNotEmpty &&
-  //       artist.isNotEmpty &&
-  //       selectedImage != null &&
-  //       selectedImageFileName != null &&
-  //       selectedAudioFile != null &&
-  //       selectedAudioFileName != null) {
-  //     // Mendapatkan direktori dokumen aplikasi
-  //     final appDocDir = await getApplicationDocumentsDirectory();
-
-  //     // Menggunakan nama file yang terpilih
-  //     final imageFileName = selectedImageFileName;
-  //     final audioFileName = selectedAudioFileName;
-
-  //     // File lokal untuk gambar dan lagu
-  //     final localImage = File("${appDocDir.path}/$imageFileName");
-  //     final localAudio = File("${appDocDir.path}/$audioFileName");
-
-  //     // Mengecek apakah file lokal ada
-  //     if (await localImage.exists() && await localAudio.exists()) {
-  //       final uniqueId = uuid.v4();
-
-  //       // File lokal ada, Anda bisa menggunakan localImage dan localAudio untuk mengaksesnya
-  //       // Tambahkan lagu baru dengan path gambar dan lagu lokal
-  //       songArray.add(SongProvider(
-  //         id: uniqueId.toString(), // Sesuaikan dengan kebutuhan
-  //         title: title,
-  //         artist: artist,
-  //         image: localImage.path,
-  //         song: localAudio.path,
-  //         genre: genre,
-  //       ));
-  //       notifyListeners();
-  //       // Bersihkan input setelah menambah lagu baru
-  //       // Lakukan tindakan lain setelah berhasil menambahkan lagu
-  //     } else {
-  //       // File lokal tidak ditemukan, Anda perlu menanganinya sesuai kebutuhan Anda
-  //       print('File lokal tidak ditemukan.');
-  //     }
-  //   }
-  // }
 }
 
 List<SongProvider> songArr = [];

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:rythm/FtechFromFirebase/FtechFromFirebase.dart';
+import 'package:rythm/FtechFromFirebase/FtechSongFromFirebase.dart';
 import 'package:rythm/providers/songProvider.dart';
 import 'package:rythm/screen/GenreList.dart';
 import 'package:rythm/screen/Play.dart';
 import '../screen/listPlaylist.dart';
 import '../screen/searchLagu.dart';
+import 'package:rythm/providers/userProvider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -44,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Selamat Malam Username',
+              'Selamat Malam ${context.watch<UsersProvider>().username}',
               style: TextStyle(
                 color: Color(0xFFD2AFFF),
                 fontSize: 20,

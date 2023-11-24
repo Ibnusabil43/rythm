@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rythm/FtechFromFirebase/FetchSonginPlaylistFromFirebase.dart';
 import 'package:rythm/model/User.dart';
 import 'package:rythm/providers/userProvider.dart';
 import '../providers/playlistProvider.dart';
@@ -23,6 +25,47 @@ class playlist1 extends StatefulWidget {
 }
 
 class _playlist1State extends State<playlist1> {
+  List<SongProvider> songArr = [];
+  @override
+  void initState() {
+    super.initState();
+    context
+        .read<PlayListProvider>()
+        .fetchplaylistid(widget.iniDaftarPlaylist.id);
+  }
+
+  void _initializeSongs() async {
+    try {
+      widget.iniDaftarPlaylist.ftechSonginPlaylistFromFirebase();
+      final collection = FirebaseFirestore.instance.collection('songs');
+      print("tesssss");
+      if (widget.iniDaftarPlaylist.tempSong.isEmpty) {
+        songArr = [];
+        print("KOSOSNGGGG");
+      } else {
+        QuerySnapshot songsSnapshot = await collection
+            .where(FieldPath.documentId,
+                whereIn: widget.iniDaftarPlaylist.tempSong)
+            .get();
+        print("SongArr doc");
+        var t = songsSnapshot.docs.toList();
+        print(t);
+
+        songArr = List.from(
+            songsSnapshot.docs.map((doc) => SongProvider.fromSnapshot(doc)));
+      }
+      print("Songs fetched successfully:");
+      print(songArr);
+      setState(() {});
+    } catch (e) {
+      print("Error fetching songs: $e");
+    }
+  }
+
+  void addLagu(SongProvider song) {
+    songArr.add(song);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +79,7 @@ class _playlist1State extends State<playlist1> {
           children: [
             InkWell(
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pop(context, " ");
               },
               child: Icon(
                 Icons.arrow_back_rounded,
@@ -75,8 +118,8 @@ class _playlist1State extends State<playlist1> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           ClipRRect(
-                            child: Image.file(
-                              File(widget.iniDaftarPlaylist.image),
+                            child: Image.network(
+                              widget.iniDaftarPlaylist.image,
                               width: 250,
                               height: 250,
                               fit: BoxFit.cover,
@@ -134,7 +177,7 @@ class _playlist1State extends State<playlist1> {
                                 builder: (context) {
                                   return popUpWarning(
                                       errorMessage: "Playlist ini kosong",
-                                      status : "error");
+                                      status: "error");
                                 },
                               );
                             }
@@ -147,22 +190,12 @@ class _playlist1State extends State<playlist1> {
               ),
               Expanded(
                 child: ListView.builder(
-                  itemCount: context
-                      .watch<UsersProvider>()
-                      .playListArr[widget.currIdx]
-                      .songList
-                      .length,
+                  itemCount: context.watch<PlayListProvider>().songList.length,
                   itemBuilder: ((context, index) {
                     if (index <=
-                        context
-                            .watch<UsersProvider>()
-                            .playListArr[widget.currIdx]
-                            .songList
-                            .length) {
+                        context.watch<PlayListProvider>().songList.length) {
                       return songListinPlaylist(
-                        iniDaftarPlaylist: context
-                            .watch<UsersProvider>()
-                            .playListArr[widget.currIdx],
+                        iniDaftarPlaylist: context.watch<PlayListProvider>(),
                         currIdx: index,
                         listPlayList: context.watch<UsersProvider>(),
                       );
@@ -177,14 +210,22 @@ class _playlist1State extends State<playlist1> {
             bottom: 20,
             child: FloatingActionButton(
               backgroundColor: Color(0xFFD2AFFF),
-              onPressed: () {
-                Navigator.push(
+              onPressed: () async {
+                String status = await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
                         songListToAdd(playlist: widget.iniDaftarPlaylist),
                   ),
                 );
+                if (status == "addSong") {
+                  print("MASUK IF");
+                  context.read<UsersProvider>().fetchPlaylist();
+                  context
+                      .read<PlayListProvider>()
+                      .fetchplaylistid(widget.iniDaftarPlaylist.id);
+                  //songArr = context.read<PlayListProvider>().songList;
+                }
               },
               child: Icon(
                 Icons.add_rounded,
@@ -230,10 +271,10 @@ class _playlist1State extends State<playlist1> {
 }
 
 class songListinPlaylist extends StatelessWidget {
-  final PlayListProvider iniDaftarPlaylist;
-  final UsersProvider listPlayList;
-  final int currIdx;
-  const songListinPlaylist(
+  PlayListProvider iniDaftarPlaylist;
+  UsersProvider listPlayList;
+  int currIdx;
+  songListinPlaylist(
       {Key? key,
       required this.iniDaftarPlaylist,
       required this.currIdx,
@@ -263,7 +304,7 @@ class songListinPlaylist extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       ClipRRect(
-                        child: Image.asset(
+                        child: Image.network(
                           iniDaftarPlaylist.songList[currIdx].image,
                           height: 60,
                           width: 60,

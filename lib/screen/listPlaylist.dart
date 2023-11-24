@@ -3,7 +3,6 @@ import '../screen/playlist1.dart';
 import '../screen/searchPlaylist.dart';
 import 'package:flutter/material.dart';
 import '../providers/playlistProvider.dart';
-import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import '../providers/userProvider.dart';
 import 'dart:io';
@@ -16,6 +15,14 @@ class listPlaylist extends StatefulWidget {
 }
 
 class _listPlaylistState extends State<listPlaylist> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<UsersProvider>().fetchPlaylist();
+    print("Playlist Arr");
+    print(context.read<UsersProvider>().getPlayListArr);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -96,13 +103,16 @@ class _listPlaylistState extends State<listPlaylist> {
             bottom: 20,
             child: FloatingActionButton(
               backgroundColor: Color(0xFFD2AFFF),
-              onPressed: () {
-                Navigator.push(
+              onPressed: () async {
+                String status = await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => addPlaylist(),
                   ),
                 );
+                if (status == "addPlaylist") {
+                  context.read<UsersProvider>().fetchPlaylist();
+                }
               },
               child: Icon(
                 Icons.add_rounded,
@@ -157,8 +167,8 @@ class _DaftarPlaylistState extends State<daftarPlaylist> {
                 Row(
                   children: [
                     ClipRRect(
-                      child: Image.file(
-                        File(widget.iniDaftarPlaylist.image),
+                      child: Image.network(
+                        widget.iniDaftarPlaylist.image,
                         width: 85,
                         height: 85,
                         fit: BoxFit.cover,
@@ -219,7 +229,7 @@ class _DaftarPlaylistState extends State<daftarPlaylist> {
                                       onTap: () {
                                         context
                                             .read<UsersProvider>()
-                                            .deletePlaylist(
+                                            .deletePlaylistoln(
                                                 playlist:
                                                     widget.iniDaftarPlaylist);
                                         Navigator.pop(context);

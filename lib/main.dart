@@ -3,6 +3,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:rythm/BottomNavBar/BottomNavigationBar.dart';
 import 'package:rythm/firebase_options.dart';
+import 'package:rythm/screen/main_screen.dart';
 import 'package:rythm/screen/welcome.dart';
 import '../screen/songListToAdd.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -52,7 +53,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Rythm',
         theme: ThemeData(fontFamily: 'Poppins'),
-        home: welcome(), // Gantilah Home() dengan widget utama Anda
+        home: main_screen(), // Gantilah Home() dengan widget utama Anda
       ),
     );
   }

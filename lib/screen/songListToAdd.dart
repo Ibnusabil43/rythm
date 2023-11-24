@@ -26,7 +26,7 @@ class _songListToAddState extends State<songListToAdd> {
             children: [
               InkWell(
                 onTap: () {
-                  Navigator.pop(context);
+                  Navigator.pop(context, " ");
                 },
                 child: Icon(
                   Icons.arrow_back_rounded,
@@ -132,9 +132,14 @@ class _SongWidgetState extends State<SongWidget> {
           setState(() {
             isAdded = !isAdded; // Toggle the added state
           });
-          context.read<UsersProvider>().tambahLagukePlaylist(
-              playlist: widget.playlist, song: widget.song);
-          Navigator.pop(context);
+          // context
+          //     .read<UsersProvider>()
+          //     .addLagu(playlist: widget.playlist, song: widget.song);
+          // widget.playlist.addSong(widget.song);
+          context
+              .read<UsersProvider>()
+              .addLagu2(playlist: widget.playlist.id, song: widget.song);
+          Navigator.pop(context, "addSong");
         },
         child:
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -143,7 +148,7 @@ class _SongWidgetState extends State<SongWidget> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 ClipRRect(
-                  child: Image.asset(
+                  child: Image.network(
                     widget.song.image,
                     height: 60,
                     width: 60,
