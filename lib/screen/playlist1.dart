@@ -161,16 +161,26 @@ class _playlist1State extends State<playlist1> {
                       ),
                       InkWell(
                           onTap: () {
-                            if (widget.iniDaftarPlaylist.songList.length > 0) {
+                            if (context
+                                    .read<PlayListProvider>()
+                                    .songList
+                                    .length >
+                                0) {
                               Navigator.push(context,
                                   MaterialPageRoute(builder: (context) {
                                 return Play(
-                                    listSong: widget.iniDaftarPlaylist.songList,
-                                    song: widget.iniDaftarPlaylist.songList[0],
+                                    listSong: context
+                                        .watch<PlayListProvider>()
+                                        .songList,
+                                    song: context
+                                        .watch<PlayListProvider>()
+                                        .songList[0],
                                     currIndex: 0);
                               }));
-                            } else if (widget
-                                    .iniDaftarPlaylist.songList.length ==
+                            } else if (context
+                                    .read<PlayListProvider>()
+                                    .songList
+                                    .length ==
                                 0) {
                               showDialog(
                                 context: context,
