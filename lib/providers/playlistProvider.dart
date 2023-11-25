@@ -51,6 +51,8 @@ class PlayListProvider extends ChangeNotifier {
   }
 
   void fetchplaylistid(String id) async {
+    print("ID ftechplaylistid");
+    print(id);
     var ref = FirebaseFirestore.instance.collection('songs');
     var ref2 = await FirebaseFirestore.instance
         .collection('users')
