@@ -127,19 +127,21 @@ class UsersProvider extends ChangeNotifier {
   }
 
   void deleteLagu2(
-      {required String playlist, required SongProvider song}) async {
+      {required PlayListProvider playlist, required SongProvider song}) async {
+    playlist.songList.remove(song);
     var ref = FirebaseFirestore.instance.collection('songs').doc(song.id);
     var ref2 = FirebaseFirestore.instance
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .collection("playlist")
-        .doc(playlist);
+        .doc(playlist.id);
 
     print("ref$ref");
     print("ref2$ref2");
     await ref2.update({
       "Songs": FieldValue.arrayRemove([ref])
     });
+    notifyListeners();
   }
 
   void deletePlaylistoln({
@@ -181,9 +183,9 @@ class UsersProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // void deleteLagudariPlaylist(
-  //     {required PlayListProvider playlist, required SongProvider song}) {
-  //   playlist.songList.remove(song);
-  //   notifyListeners();
-  // }
+  void deleteLagudariPlaylist(
+      {required PlayListProvider playlist, required SongProvider song}) {
+    playlist.songList.remove(song);
+    notifyListeners();
+  }
 }

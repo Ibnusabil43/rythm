@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:rythm/screen/HomeScree.dart';
 import 'package:rythm/screen/popupScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rythm/BottomNavBar/BottomNavigationBar.dart';
@@ -152,7 +151,7 @@ class _SignUpState extends State<SignUp> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => HomeScreen(),
+                              builder: (context) => BottomNavbar(),
                             ),
                           );
                         } else {

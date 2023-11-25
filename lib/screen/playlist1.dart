@@ -361,11 +361,10 @@ class songListinPlaylist extends StatelessWidget {
                             InkWell(
                                 onTap: () {
                                   context.read<UsersProvider>().deleteLagu2(
-                                      playlist: iniDaftarPlaylist.id,
+                                      playlist: iniDaftarPlaylist,
                                       song:
                                           iniDaftarPlaylist.songList[currIdx]);
-
-                                  Navigator.pop(context);
+                                  Navigator.pop(context, " ");
 
                                   // Tutup modal bottom sheet
                                 },
