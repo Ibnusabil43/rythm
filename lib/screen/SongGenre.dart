@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:rythm/FtechFromFirebase/FtechSongFromFirebase.dart';
 import 'package:rythm/providers/songProvider.dart';
-import 'package:rythm/screen/HomeScree.dart';
+import 'package:rythm/screen/Play.dart';
 
 class SongGenre extends StatefulWidget {
   final String genreName;
@@ -11,6 +12,23 @@ class SongGenre extends StatefulWidget {
 }
 
 class _SongGenreState extends State<SongGenre> {
+  @override
+  void initState() {
+    super.initState();
+    _initializeSongs();
+  }
+
+  void _initializeSongs() async {
+    try {
+      songArr = await ftechSongsFromFirebase();
+      print("Songs fetched successfully:");
+      // print(songArr);
+      setState(() {});
+    } catch (e) {
+      print("Error fetching songs: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,6 +64,112 @@ class _SongGenreState extends State<SongGenre> {
           ],
         ),
       ),
+      body: Container(
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        child: Expanded(
+          child: ListView.builder(
+            itemCount: songArr.length,
+            itemBuilder: (context, index) {
+              if (index < songArr.length) {
+                return songListThisGenre(
+                  iniListLagu: songArr[index],
+                  currIdx: index,
+                );
+              }
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class songListThisGenre extends StatelessWidget {
+  final SongProvider iniListLagu;
+  final int currIdx;
+
+  const songListThisGenre(
+      {Key? key, required this.iniListLagu, required this.currIdx})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              InkWell(
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    //songArr = context.watch<SongProvider>().songArray;
+                    print(songArr);
+                    if (songArr.isNotEmpty && currIdx < songArr.length) {
+                      return Play(
+                        listSong: songArr,
+                        song: songArr[currIdx],
+                        currIndex: currIdx,
+                      );
+                    } else {
+                      // Handle the case where the list is empty or the index is out of bounds
+                      // You can show an error message or navigate to a default screen.
+                      return Scaffold(
+                        body: Center(
+                          child: Text('Error: Invalid index or empty list'),
+                        ),
+                      );
+                    }
+                  }));
+                },
+                child: Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                        child: Image.network(
+                          iniListLagu.image,
+                          height: 60,
+                          width: 60,
+                          fit: BoxFit.cover,
+                        ),
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                      ),
+                      SizedBox(
+                        width: 11.81,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            iniListLagu.title,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFFD2AFFF),
+                            ),
+                          ),
+                          Text(
+                            iniListLagu.artist,
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w400,
+                              color: Color(0xFFD2AFFF),
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          height: 10,
+        )
+      ],
     );
   }
 }
