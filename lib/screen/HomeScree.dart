@@ -33,8 +33,23 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  String getGreeting() {
+    var hour = DateTime.now().hour;
+
+    if (hour >= 0 && hour < 5) {
+      return 'Malam';
+    } else if (hour >= 5 && hour < 12) {
+      return 'Pagi';
+    } else if (hour >= 12 && hour < 17) {
+      return 'Siang';
+    } else {
+      return 'Malam';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    String greeting = getGreeting();
     return Scaffold(
       backgroundColor: Color(0xFF1C1C27),
       appBar: AppBar(
@@ -45,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Selamat Malam ${context.watch<UsersProvider>().username}',
+              'Selamat $greeting ${context.watch<UsersProvider>().username}',
               style: TextStyle(
                 color: Color(0xFFD2AFFF),
                 fontSize: 20,

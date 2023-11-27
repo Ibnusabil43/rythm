@@ -72,18 +72,14 @@ class _SongGenreState extends State<SongGenre> {
       ),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 20),
-        child: Expanded(
-          child: ListView.builder(
-            itemCount: songGen.length,
-            itemBuilder: (context, index) {
-              if (index < songGen.length) {
-                return songListThisGenre(
-                  iniListLagu: songGen[index],
-                  currIdx: index,
-                );
-              }
-            },
-          ),
+        child: ListView.builder(
+          itemCount: songGen.length,
+          itemBuilder: (context, index) {
+            return songListThisGenre(
+              iniListLagu: songGen[index],
+              currIdx: index,
+            );
+          },
         ),
       ),
     );

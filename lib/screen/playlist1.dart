@@ -79,6 +79,7 @@ class _playlist1State extends State<playlist1> {
           children: [
             InkWell(
               onTap: () {
+                context.read<PlayListProvider>().songList = [];
                 Navigator.pop(context, " ");
               },
               child: Icon(
