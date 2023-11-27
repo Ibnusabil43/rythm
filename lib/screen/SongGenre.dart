@@ -20,8 +20,14 @@ class _SongGenreState extends State<SongGenre> {
 
   void _initializeSongs() async {
     try {
+      songGen = [];
       songArr = await ftechSongsFromFirebase();
       print("Songs fetched successfully:");
+      for (var song in songArr) {
+        if (song.genre == widget.genreName) {
+          songGen.add(song);
+        }
+      }
       // print(songArr);
       setState(() {});
     } catch (e) {
@@ -68,11 +74,11 @@ class _SongGenreState extends State<SongGenre> {
         padding: EdgeInsets.symmetric(horizontal: 20),
         child: Expanded(
           child: ListView.builder(
-            itemCount: songArr.length,
+            itemCount: songGen.length,
             itemBuilder: (context, index) {
-              if (index < songArr.length) {
+              if (index < songGen.length) {
                 return songListThisGenre(
-                  iniListLagu: songArr[index],
+                  iniListLagu: songGen[index],
                   currIdx: index,
                 );
               }
@@ -105,10 +111,10 @@ class songListThisGenre extends StatelessWidget {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                     //songArr = context.watch<SongProvider>().songArray;
                     print(songArr);
-                    if (songArr.isNotEmpty && currIdx < songArr.length) {
+                    if (songGen.isNotEmpty && currIdx < songGen.length) {
                       return Play(
-                        listSong: songArr,
-                        song: songArr[currIdx],
+                        listSong: songGen,
+                        song: songGen[currIdx],
                         currIndex: currIdx,
                       );
                     } else {

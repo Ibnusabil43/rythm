@@ -45,4 +45,5 @@ class SongProvider extends ChangeNotifier {
   List<SongProvider> songArray = [];
 }
 
+List<SongProvider> songGen = [];
 List<SongProvider> songArr = [];

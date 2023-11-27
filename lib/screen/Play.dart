@@ -72,6 +72,13 @@ class _AudioPlayerScreenState extends State<Play> {
             artUri: Uri.parse(widget.listSong[i].image),
           )));
     }
+    context.read<UsersProvider>().fetchPlaylist();
+    print("Playlist Arr");
+    print(context.read<UsersProvider>().getPlayListArr);
+    super.initState();
+    context.read<UsersProvider>().fetchPlaylist();
+    print("Playlist Arr");
+    print(context.read<UsersProvider>().getPlayListArr);
 
     _init(audioQuery);
   }
@@ -506,8 +513,8 @@ class _DaftarPlaylisttoAddState extends State<DaftarPlaylisttoAdd> {
               Row(
                 children: [
                   ClipRRect(
-                    child: Image.file(
-                      File(widget.iniListPlaylisttambah.image),
+                    child: Image.network(
+                      widget.iniListPlaylisttambah.image,
                       width: 85,
                       height: 85,
                       fit: BoxFit.cover,
@@ -548,8 +555,8 @@ class _DaftarPlaylisttoAddState extends State<DaftarPlaylisttoAdd> {
                     setState(() {
                       isButtonClicked = true;
                     });
-                    context.read<UsersProvider>().tambahLagukePlaylist(
-                        playlist: widget.iniListPlaylisttambah,
+                    context.read<UsersProvider>().addLagu2(
+                        playlist: widget.iniListPlaylisttambah.id,
                         song: widget.song);
                   } else {
                     // Tidak ada tindakan yang diambil ketika tombol sudah diklik
