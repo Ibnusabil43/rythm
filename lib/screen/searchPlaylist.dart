@@ -146,14 +146,9 @@ class PlaylistSearchResult extends StatelessWidget {
       children: [
         InkWell(
           onTap: () {
-            // Navigate to the playlist screen
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return playlist1(
-                iniDaftarPlaylist: context.watch<UsersProvider>().playListArr[
-                    context
-                        .watch<UsersProvider>()
-                        .playListArr
-                        .indexOf(filteredPlaylists[currIdx])],
+                iniDaftarPlaylist: filteredPlaylists[currIdx],
                 currIdx: context
                     .watch<UsersProvider>()
                     .playListArr
