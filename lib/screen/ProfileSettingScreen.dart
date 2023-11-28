@@ -6,6 +6,7 @@ import '../providers/songProvider.dart';
 import '../Screen/Play.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
+import '../Screen/PopUpConfirmationMessage.dart';
 
 class ProfileSetting extends StatefulWidget {
   const ProfileSetting({super.key});
@@ -15,6 +16,14 @@ class ProfileSetting extends StatefulWidget {
 }
 
 class _ProfileSettingState extends State<ProfileSetting> {
+  bool _isEditing = false;
+  String _username = "Yanto";
+  TextEditingController _usernameController = TextEditingController();
+  void initState() {
+    super.initState();
+    _usernameController.text = _username; // Set nilai awal TextField
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,14 +33,46 @@ class _ProfileSettingState extends State<ProfileSetting> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            SizedBox(
+              width: 28,
+            ),
             Text(
               "Profile",
               style: TextStyle(
                 fontSize: 25,
                 fontWeight: FontWeight.w700,
                 color: Color(0xFFD2AFFF),
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                // Menampilkan popup konfirmasi
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return ConfirmationPopup(
+                      confirmationMessage: 'Apakah Anda Yakin Ingin Logout?',
+                      onConfirm: () {
+                        // Tindakan yang akan diambil jika tombol Confirm ditekan
+                        FirebaseAuth.instance.signOut();
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => welcome()));
+                      },
+                      onCancel: () {
+                        // Tindakan yang akan diambil jika tombol Cancel ditekan
+                        Navigator.pop(context); // Menutup popup
+                      },
+                    );
+                  },
+                );
+              },
+              child: Icon(
+                Icons.logout_rounded,
+                color: Color(0xFFD2AFFF),
+                size: 27,
               ),
             ),
           ],
@@ -81,68 +122,162 @@ class _ProfileSettingState extends State<ProfileSetting> {
               ],
             ),
             SizedBox(
-              height: 20,
+              height: 30,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            Column(
               children: [
-                Text(
-                  "Username",
-                  style: TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFFD2AFFF),
-                  ),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                InkWell(
-                  onTap: () {},
-                  child: Icon(
-                    Icons.edit_rounded,
-                    color: Color(0xFFD2AFFF),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                InkWell(
-                    onTap: () {
-                      FirebaseAuth.instance.signOut();
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => welcome()));
-                    },
-                    child: Container(
-                      width: 200,
-                      height: 47,
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Color(0xFFD2AFFF),
-                      ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
                       child: Row(
                         children: [
-                          Expanded(
-                            child: Text(
-                              'LOG OUT',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 15,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w700,
+                          Icon(
+                            Icons.person_2_rounded,
+                            size: 30,
+                            color: Color(0xFFD2AFFF),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Username",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFFD2AFFF).withOpacity(0.6),
+                                ),
                               ),
-                            ),
+                              _isEditing
+                                  ? Row(
+                                      children: [
+                                        Container(
+                                          width: 200,
+                                          child: TextField(
+                                            controller: _usernameController,
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w200,
+                                              color: Color(0xFFD2AFFF),
+                                            ),
+                                            decoration: InputDecoration(
+                                              border: InputBorder.none,
+                                              enabledBorder:
+                                                  UnderlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: Color(0xFFD2AFFF)),
+                                              ),
+                                              focusedBorder:
+                                                  UnderlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: Color(0xFFD2AFFF)),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  : Text(
+                                      _username,
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w200,
+                                        color: Color(0xFFD2AFFF),
+                                      ),
+                                    ),
+                            ],
                           ),
                         ],
                       ),
-                    )),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          _isEditing = !_isEditing;
+                          if (!_isEditing) {
+                            if (_usernameController.text != _username) {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return ConfirmationPopup(
+                                    confirmationMessage:
+                                        'Apakah Anda Yakin Ingin Merubah Username Anda Menjadi ${_usernameController.text}?',
+                                    onConfirm: () {
+                                      // Tindakan yang akan diambil jika tombol Confirm ditekan
+                                      setState(() {
+                                        _username = _usernameController.text;
+                                        //ISI ALGORITMA UPDATE FIREBASE DISINI
+                                      });
+                                      //ISI ALGORITMA UPDATE FIREBASE DISINI KALO GA DIATAS
+                                      Navigator.pop(context);
+                                    },
+                                    onCancel: () {
+                                      // Tindakan yang akan diambil jika tombol Cancel ditekan
+                                      _usernameController.text = _username;
+                                      Navigator.pop(context); // Menutup popup
+                                    },
+                                  );
+                                },
+                              );
+                            }
+                            //Update Username Firebase
+                          }
+                        });
+                      },
+                      child: Icon(
+                        _isEditing ? Icons.check_rounded : Icons.edit_rounded,
+                        size: 20,
+                        color: Color(0xFFD2AFFF),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.email_rounded,
+                            size: 30,
+                            color: Color(0xFFD2AFFF),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Email",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFFD2AFFF).withOpacity(0.6),
+                                ),
+                              ),
+                              Text(
+                                "admin@gmail.com",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w200,
+                                  color: Color(0xFFD2AFFF),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
             SizedBox(
