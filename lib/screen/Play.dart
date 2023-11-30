@@ -1,9 +1,7 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, body_might_complete_normally_nullable
 
 import 'package:flutter/material.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:rxdart/rxdart.dart';
@@ -11,7 +9,6 @@ import 'package:rythm/providers/playlistProvider.dart';
 import '../providers/userProvider.dart';
 import 'package:rythm/providers/songProvider.dart';
 import 'package:provider/provider.dart';
-import 'dart:io';
 
 class PositionData {
   const PositionData(

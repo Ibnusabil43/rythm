@@ -1,11 +1,13 @@
+// ignore_for_file: body_might_complete_normally_nullable
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rythm/FtechFromFirebase/FtechSongFromFirebase.dart';
 import 'package:rythm/providers/songProvider.dart';
-import 'package:rythm/screen/GenreList.dart';
+import 'package:rythm/screen/Genre/GenreList.dart';
 import 'package:rythm/screen/Play.dart';
-import '../screen/listPlaylist.dart';
-import '../screen/searchLagu.dart';
+import 'package:rythm/screen/Playlist/listPlaylist.dart';
+import 'package:rythm/screen/Search Song/searchLagu.dart';
 import 'package:rythm/providers/userProvider.dart';
 
 class HomeScreen extends StatefulWidget {

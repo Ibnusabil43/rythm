@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rythm/providers/songProvider.dart';
-import 'package:provider/provider.dart';
 
 Future<List<SongProvider>> ftechSongsFromFirebase() async {
   List<SongProvider> songArr = [];

@@ -1,8 +1,10 @@
+// ignore_for_file: body_might_complete_normally_nullable, must_be_immutable
+
 import 'package:flutter/material.dart';
 import 'package:rythm/providers/songProvider.dart';
-import '../providers/playlistProvider.dart';
+import 'package:rythm/providers/playlistProvider.dart';
 import 'package:provider/provider.dart';
-import '../providers/userProvider.dart';
+import 'package:rythm/providers/userProvider.dart';
 
 class songListToAdd extends StatefulWidget {
   final PlayListProvider playlist;

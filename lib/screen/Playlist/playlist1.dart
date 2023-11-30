@@ -1,16 +1,14 @@
+// ignore_for_file: body_might_complete_normally_nullable, must_be_immutable
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:rythm/FtechFromFirebase/FetchSonginPlaylistFromFirebase.dart';
-import 'package:rythm/model/User.dart';
 import 'package:rythm/providers/userProvider.dart';
-import '../providers/playlistProvider.dart';
+import 'package:rythm/providers/playlistProvider.dart';
 import 'package:rythm/providers/songProvider.dart';
-import '../screen/listPlaylist.dart';
-import '../screen/Play.dart';
+import 'package:rythm/screen/Play.dart';
 import 'package:flutter/material.dart';
-import 'dart:io';
-import '../screen/songListToAdd.dart';
+import 'package:rythm/screen/Playlist/songListToAdd.dart';
 import 'package:provider/provider.dart';
-import '../screen/popupScreen.dart';
+import 'package:rythm/PopUpWindow/popupScreen.dart';
 
 class playlist1 extends StatefulWidget {
   final PlayListProvider iniDaftarPlaylist;

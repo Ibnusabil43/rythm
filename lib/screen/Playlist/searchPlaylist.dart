@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:rythm/screen/playlist1.dart';
+import 'package:rythm/screen/Playlist/playlist1.dart';
 import 'package:provider/provider.dart';
-import '../providers/userProvider.dart';
-import '../providers/playlistProvider.dart';
-import 'dart:io';
+import 'package:rythm/providers/userProvider.dart';
+import 'package:rythm/providers/playlistProvider.dart';
 
 List<PlayListProvider> filteredPlaylists = [];
 

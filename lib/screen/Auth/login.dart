@@ -1,11 +1,9 @@
+// ignore_for_file: unnecessary_null_comparison
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rythm/BottomNavBar/BottomNavigationBar.dart';
-import 'package:rythm/providers/songProvider.dart';
-import 'package:rythm/screen/HomeScree.dart';
-import 'package:rythm/screen/popupScreen.dart';
-import '../screen/welcome.dart';
+import 'package:rythm/PopUpWindow/popupScreen.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class LogIn extends StatefulWidget {
   const LogIn({super.key});

@@ -1,14 +1,10 @@
 //import 'package:firebase_core/firebase_core.dart';
 
 import 'package:firebase_core/firebase_core.dart';
-import 'package:rythm/BottomNavBar/BottomNavigationBar.dart';
 import 'package:rythm/firebase_options.dart';
 import 'package:rythm/screen/main_screen.dart';
-import 'package:rythm/screen/welcome.dart';
-import '../screen/songListToAdd.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/userProvider.dart';
 import '../providers/playlistProvider.dart';

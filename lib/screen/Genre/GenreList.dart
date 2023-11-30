@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rythm/providers/GenreProvider.dart';
-import 'package:rythm/screen/SongGenre.dart';
+import 'package:rythm/screen/Genre/SongGenre.dart';
 
 class GenreList extends StatefulWidget {
   const GenreList({super.key});

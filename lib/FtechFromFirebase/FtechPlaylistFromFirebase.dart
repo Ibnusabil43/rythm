@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:rythm/FtechFromFirebase/FetchSonginPlaylistFromFirebase.dart';
 import 'package:rythm/providers/playlistProvider.dart';
-import 'package:rythm/providers/songProvider.dart';
 
 Future<List<PlayListProvider>> ftechPlaylistFromFirebase() async {
   List<PlayListProvider> playlistArr = [];

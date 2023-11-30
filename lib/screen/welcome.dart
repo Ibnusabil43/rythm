@@ -1,5 +1,5 @@
-import '../screen/login.dart';
-import '../screen/signup.dart';
+import 'package:rythm/screen/Auth/login.dart';
+import 'package:rythm/screen/Auth/signup.dart';
 import 'package:flutter/material.dart';
 
 class welcome extends StatefulWidget {

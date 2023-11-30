@@ -1,11 +1,12 @@
-import '../screen/addPlaylist.dart';
-import '../screen/playlist1.dart';
-import '../screen/searchPlaylist.dart';
+// ignore_for_file: body_might_complete_normally_nullable
+
+import 'package:rythm/screen/Playlist/addPlaylist.dart';
+import 'package:rythm/screen/Playlist//playlist1.dart';
+import 'package:rythm/screen/Playlist//searchPlaylist.dart';
 import 'package:flutter/material.dart';
-import '../providers/playlistProvider.dart';
+import 'package:rythm/providers/playlistProvider.dart';
 import 'package:provider/provider.dart';
-import '../providers/userProvider.dart';
-import 'dart:io';
+import 'package:rythm/providers/userProvider.dart';
 
 class listPlaylist extends StatefulWidget {
   const listPlaylist({super.key});

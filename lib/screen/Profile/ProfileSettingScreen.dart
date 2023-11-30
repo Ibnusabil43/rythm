@@ -1,12 +1,13 @@
+// ignore_for_file: body_might_complete_normally_nullable
+
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:rythm/screen/welcome.dart';
-import '../providers/songProvider.dart';
-import '../Screen/Play.dart';
+import 'package:rythm/providers/songProvider.dart';
+import 'package:rythm/Screen/Play.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
-import '../Screen/PopUpConfirmationMessage.dart';
+import 'package:rythm/PopUpWindow/PopUpConfirmationMessage.dart';
 
 class ProfileSetting extends StatefulWidget {
   const ProfileSetting({super.key});

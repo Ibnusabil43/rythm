@@ -1,7 +1,9 @@
+// ignore_for_file: unused_field
+
 import 'package:flutter/material.dart';
 import 'package:rythm/screen/HomeScree.dart';
-import 'package:rythm/screen/ProfileSettingScreen.dart';
-import 'package:rythm/screen/UploadSongScreen.dart';
+import 'package:rythm/screen/Profile/ProfileSettingScreen.dart';
+import 'package:rythm/screen/Upload Song/UploadSongScreen.dart';
 
 class BottomNavbar extends StatefulWidget {
   const BottomNavbar({super.key});
