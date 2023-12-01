@@ -383,7 +383,58 @@ class YourSong extends StatelessWidget {
                   ),
                 ),
               ),
-              Icon(Icons.more_vert_rounded, color: Color(0xFFD2AFFF), size: 30),
+              InkWell(
+                onTap: () {
+                  showModalBottomSheet(
+                    context: context,
+                    backgroundColor: Colors.transparent,
+                    builder: (context) {
+                      return Container(
+                        padding: EdgeInsets.only(top: 24, left: 31, right: 31),
+                        height: 80,
+                        decoration: ShapeDecoration(
+                          color: Color(0xFFD2AFFF),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20),
+                                  topRight: Radius.circular(20))),
+                        ),
+                        child: Column(
+                          children: [
+                            InkWell(
+                                onTap: () {
+                                  //PANGGIL DELETE SONG DISINI
+                                },
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.delete_rounded,
+                                      color: Colors.white,
+                                      size: 30,
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text(
+                                      'Hapus Lagu',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontFamily: 'Poppins',
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    )
+                                  ],
+                                )),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+                child: Icon(Icons.more_vert_rounded,
+                    color: Color(0xFFD2AFFF), size: 30),
+              ),
             ],
           ),
         ),

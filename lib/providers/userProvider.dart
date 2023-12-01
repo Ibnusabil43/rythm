@@ -16,6 +16,8 @@ class UsersProvider extends ChangeNotifier {
   String password;
   String profileImage;
   List<PlayListProvider> playListArr = [];
+  List<SongProvider> uploadedSong = [];
+
   get getPlayListArr => playListArr;
   UsersProvider({
     this.id = "",
