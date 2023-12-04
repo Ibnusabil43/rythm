@@ -141,8 +141,11 @@ class _SignUpState extends State<SignUp> {
                           collRef.doc(user).set({
                             'email': email.text,
                             'username': username.text,
+                            'songUploaded': [],
                           });
-                          FirebaseAuth.instance.signOut();
+                          final userLog =
+                              await _auth.signInWithEmailAndPassword(
+                                  email: email.text, password: password.text);
                           Navigator.push(
                             context,
                             MaterialPageRoute(

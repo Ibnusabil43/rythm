@@ -29,9 +29,7 @@ class PlayListProvider extends ChangeNotifier {
   }
 
   void ftechSonginPlaylistFromFirebase() async {
-    // List<SongProvider> songArr = [];
     final collection = FirebaseFirestore.instance.collection('songs');
-    print("tesssss");
     if (this.tempSong.isEmpty) {
       this.songList = [];
       notifyListeners();
