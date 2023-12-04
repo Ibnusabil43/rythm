@@ -136,6 +136,9 @@ class _SignUpState extends State<SignUp> {
                         );
                         final user = UserCredential.user!.uid;
                         if (user != null) {
+                          if (username.text == "") {
+                            throw ("UUsername tidak boleh kosong");
+                          }
                           CollectionReference collRef =
                               FirebaseFirestore.instance.collection("users");
                           collRef.doc(user).set({

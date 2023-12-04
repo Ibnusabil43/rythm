@@ -66,6 +66,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
                     return ConfirmationPopup(
                       confirmationMessage: 'Apakah Anda Yakin Ingin Logout?',
                       onConfirm: () {
+                        context.read<UsersProvider>().playListArr = [];
                         // Tindakan yang akan diambil jika tombol Confirm ditekan
                         FirebaseAuth.instance.signOut();
                         Navigator.push(context,
