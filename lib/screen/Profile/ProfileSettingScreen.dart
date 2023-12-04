@@ -2,6 +2,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:rythm/providers/userProvider.dart';
 import 'package:rythm/screen/welcome.dart';
 import 'package:rythm/providers/songProvider.dart';
 import 'package:rythm/Screen/Play.dart';
@@ -21,8 +22,16 @@ class _ProfileSettingState extends State<ProfileSetting> {
   String _username = "Yanto";
   TextEditingController _usernameController = TextEditingController();
   void initState() {
+    List<UsersProvider> uploadedSong = [];
     super.initState();
     _usernameController.text = _username; // Set nilai awal TextField
+    super.initState();
+    context.read<UsersProvider>().fetchSongUser();
+  }
+
+  void _initState() {
+    final user = context.read<UsersProvider>();
+    user.fetchSongUser();
   }
 
   @override
@@ -299,12 +308,13 @@ class _ProfileSettingState extends State<ProfileSetting> {
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: context.watch<SongProvider>().songArray.length,
+                itemCount: context.watch<UsersProvider>().uploadedSong.length,
                 itemBuilder: (context, index) {
-                  if (index < context.watch<SongProvider>().songArray.length) {
+                  if (index <
+                      context.watch<UsersProvider>().uploadedSong.length) {
                     return YourSong(
                       iniListLagu:
-                          context.watch<SongProvider>().songArray[index],
+                          context.watch<UsersProvider>().uploadedSong[index],
                       currIdx: index,
                     );
                   }
@@ -337,8 +347,10 @@ class YourSong extends StatelessWidget {
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                     return Play(
-                        listSong: context.watch<SongProvider>().songArray,
-                        song: context.watch<SongProvider>().songArray[currIdx],
+                        listSong: context.watch<UsersProvider>().uploadedSong,
+                        song: context
+                            .watch<UsersProvider>()
+                            .uploadedSong[currIdx],
                         currIndex: currIdx);
                   }));
                 },

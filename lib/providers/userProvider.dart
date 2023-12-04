@@ -17,6 +17,7 @@ class UsersProvider extends ChangeNotifier {
   String profileImage;
   List<PlayListProvider> playListArr = [];
   List<SongProvider> uploadedSong = [];
+  List<dynamic> tempSong = [];
 
   get getPlayListArr => playListArr;
   UsersProvider({
@@ -30,6 +31,32 @@ class UsersProvider extends ChangeNotifier {
   void setid(String uid) {
     this.id = uid;
     print(id);
+  }
+
+  void setSongList(List<dynamic> songList) {
+    this.tempSong = songList;
+    notifyListeners();
+  }
+
+  void fetchSongUser() async {
+    print("Uploaded song$uploadedSong");
+    final collection = FirebaseFirestore.instance.collection('songs');
+    if (this.tempSong.isEmpty) {
+      this.uploadedSong = [];
+    } else {
+      QuerySnapshot songsSnapshot = await collection
+          .where(FieldPath.documentId, whereIn: this.tempSong)
+          .get();
+      print("SongArr doc");
+      var t = songsSnapshot.docs.toList();
+      print(t);
+      print("Uploaded song$uploadedSong");
+
+      this.uploadedSong = List.from(
+          songsSnapshot.docs.map((doc) => SongProvider.fromSnapshot(doc)));
+
+      notifyListeners();
+    }
   }
 
   void fetchprofile() async {
