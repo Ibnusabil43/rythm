@@ -33,18 +33,8 @@ class _addPlaylistState extends State<addPlaylist> {
       final imageFileName = pickedFile.name;
       final imageFile = File(pickedFile.path);
       final localImage = File('${appDocDir.path}/$imageFileName');
-      // String filepath = imageFile.path;
-      // String target = filepath.substring(filepath.lastIndexOf('/') + 1);
-      // final imageref = FirebaseStorage.instance.ref().child('images/$target');
-      // File file = File(filepath);
       try {
         await imageFile.copy(localImage.path);
-        // await imageref.putFile(
-        //     file,
-        //     SettableMetadata(
-        //       contentType: 'image/jpeg',
-        //     ));
-        // imageUrl = await imageref.getDownloadURL();
         setState(() {
           selectedImage = localImage;
           selectedImageFileName = imageFileName;

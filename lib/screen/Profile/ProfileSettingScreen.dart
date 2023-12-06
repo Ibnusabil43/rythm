@@ -9,6 +9,8 @@ import 'package:rythm/Screen/Play.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
 import 'package:rythm/PopUpWindow/PopUpConfirmationMessage.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfileSetting extends StatefulWidget {
   const ProfileSetting({super.key});
@@ -27,6 +29,30 @@ class _ProfileSettingState extends State<ProfileSetting> {
     _usernameController.text = _username; // Set nilai awal TextField
     super.initState();
     context.read<UsersProvider>().fetchSongUser();
+  }
+
+  File? selectedImage;
+  String?
+      selectedImageFileName; // Tambahkan variabel untuk nama file gambar terpilih
+
+  Future<void> getImage() async {
+    final imagePicker = ImagePicker();
+    final pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      final appDocDir = await getApplicationDocumentsDirectory();
+      final imageFileName = pickedFile.name;
+      final imageFile = File(pickedFile.path);
+      final localImage = File('${appDocDir.path}/$imageFileName');
+      try {
+        await imageFile.copy(localImage.path);
+        setState(() {
+          selectedImage = localImage;
+          selectedImageFileName = imageFileName;
+        });
+      } catch (e) {
+        print('Error copying file: $e');
+      }
+    }
   }
 
   void _initState() {
@@ -102,15 +128,24 @@ class _ProfileSettingState extends State<ProfileSetting> {
                 Stack(
                   children: [
                     InkWell(
-                      onTap: () {},
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(100),
-                        child: Image.asset(
-                          "assets/ProfilePicture.png",
-                          width: 200,
-                          height: 200,
-                        ),
-                      ),
+                      onTap: () async {
+                        await getImage();
+                      },
+                      child: selectedImage != null
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(100),
+                              child: Image.file(
+                                selectedImage!,
+                                width: 200,
+                                height: 200,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                          : ClipRRect(
+                              borderRadius: BorderRadius.circular(100),
+                              child: Icon(Icons.person_rounded,
+                                  size: 200, color: Color(0xFFD2AFFF)),
+                            ),
                     ),
                     Positioned(
                       bottom: 0,
