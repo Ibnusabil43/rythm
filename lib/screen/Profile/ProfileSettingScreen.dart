@@ -2,6 +2,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:rythm/FtechFromFirebase/FetchSonginUser.dart';
 import 'package:rythm/providers/userProvider.dart';
 import 'package:rythm/screen/welcome.dart';
 import 'package:rythm/providers/songProvider.dart';
@@ -20,15 +21,18 @@ class ProfileSetting extends StatefulWidget {
 }
 
 class _ProfileSettingState extends State<ProfileSetting> {
+  List<SongProvider> uploadedSong = [];
   bool _isEditing = false;
   String _username = "Yanto";
   TextEditingController _usernameController = TextEditingController();
   void initState() {
-    List<UsersProvider> uploadedSong = [];
     super.initState();
     _usernameController.text = _username; // Set nilai awal TextField
     super.initState();
-    context.read<UsersProvider>().fetchSongUser();
+    context.read<UsersProvider>().uploadedSongs = [];
+    context.read<UsersProvider>().fetchSong();
+
+    print("Songfetchuploaded");
   }
 
   File? selectedImage;
@@ -53,11 +57,6 @@ class _ProfileSettingState extends State<ProfileSetting> {
         print('Error copying file: $e');
       }
     }
-  }
-
-  void _initState() {
-    final user = context.read<UsersProvider>();
-    user.fetchSongUser();
   }
 
   @override
@@ -344,13 +343,13 @@ class _ProfileSettingState extends State<ProfileSetting> {
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: context.watch<UsersProvider>().uploadedSong.length,
+                itemCount: context.watch<UsersProvider>().uploadedSongs.length,
                 itemBuilder: (context, index) {
                   if (index <
-                      context.watch<UsersProvider>().uploadedSong.length) {
+                      context.watch<UsersProvider>().uploadedSongs.length) {
                     return YourSong(
                       iniListLagu:
-                          context.watch<UsersProvider>().uploadedSong[index],
+                          context.watch<UsersProvider>().uploadedSongs[index],
                       currIdx: index,
                     );
                   }
@@ -383,10 +382,10 @@ class YourSong extends StatelessWidget {
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                     return Play(
-                        listSong: context.watch<UsersProvider>().uploadedSong,
+                        listSong: context.watch<UsersProvider>().uploadedSongs,
                         song: context
                             .watch<UsersProvider>()
-                            .uploadedSong[currIdx],
+                            .uploadedSongs[currIdx],
                         currIndex: currIdx);
                   }));
                 },
@@ -395,8 +394,8 @@ class YourSong extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       ClipRRect(
-                        child: Image.file(
-                          File(iniListLagu.image),
+                        child: Image.network(
+                          iniListLagu.image,
                           height: 60,
                           width: 60,
                           fit: BoxFit.cover,
@@ -452,6 +451,9 @@ class YourSong extends StatelessWidget {
                             InkWell(
                                 onTap: () {
                                   //PANGGIL DELETE SONG DISINI
+                                  context.read<UsersProvider>().deleteSongUser(
+                                      user: context.read<UsersProvider>(),
+                                      song: iniListLagu);
                                 },
                                 child: Row(
                                   children: [

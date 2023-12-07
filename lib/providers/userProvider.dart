@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:rythm/FtechFromFirebase/FetchSonginUser.dart';
 import 'package:rythm/FtechFromFirebase/FtechPlaylistFromFirebase.dart';
 import '../providers/playlistProvider.dart';
 import 'package:rythm/providers/songProvider.dart';
@@ -16,7 +17,7 @@ class UsersProvider extends ChangeNotifier {
   String password;
   String profileImage;
   List<PlayListProvider> playListArr = [];
-  List<SongProvider> uploadedSong = [];
+  List<SongProvider> uploadedSongs = [];
   List<dynamic> tempSong = [];
 
   get getPlayListArr => playListArr;
@@ -33,30 +34,61 @@ class UsersProvider extends ChangeNotifier {
     print(id);
   }
 
-  void setSongList(List<dynamic> songList) {
-    this.tempSong = songList;
+  void fetchSong() async {
+    List<SongProvider> uploadedSong = await fetchSongUser();
+    for (var i = 0; i < uploadedSong.length; i++) {
+      uploadedSongs.add(SongProvider(
+        id: uploadedSong[i].id,
+        title: uploadedSong[i].title,
+        artist: uploadedSong[i].artist,
+        image: uploadedSong[i].image,
+        song: uploadedSong[i].song,
+        genre: uploadedSong[i].genre,
+      ));
+    }
     notifyListeners();
   }
 
-  void fetchSongUser() async {
-    print("Uploaded song$uploadedSong");
-    final collection = FirebaseFirestore.instance.collection('songs');
-    if (this.tempSong.isEmpty) {
-      this.uploadedSong = [];
-    } else {
-      QuerySnapshot songsSnapshot = await collection
-          .where(FieldPath.documentId, whereIn: this.tempSong)
-          .get();
-      print("SongArr doc");
-      var t = songsSnapshot.docs.toList();
-      print(t);
-      print("Uploaded song$uploadedSong");
+  Future<void> deleteSongUser(
+      {required UsersProvider user, required SongProvider song}) async {
+    var deletedSongCollection =
+        await FirebaseFirestore.instance.collection("songs");
 
-      this.uploadedSong = List.from(
-          songsSnapshot.docs.map((doc) => SongProvider.fromSnapshot(doc)));
+    var deletedArtistSongCollection = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection("UserSongs");
 
-      notifyListeners();
-    }
+    deletedSongCollection.doc(song.id).get().then((DocumentSnapshot doc) async {
+      final data = doc.data() as Map<String, dynamic>;
+
+      await FirebaseStorage.instance
+          .ref()
+          .child("songs/" + data["SongStorage"])
+          .delete();
+      await FirebaseStorage.instance
+          .ref()
+          .child("images/" + data["ImageStorage"])
+          .delete();
+      // delete Songs Collection
+      await deletedSongCollection.doc(song.id).delete();
+      // delete ArtistSong Collection
+      deletedArtistSongCollection
+          .where("Songs", isEqualTo: deletedSongCollection.doc(song.id))
+          .get()
+          .then((querySnapshot) async {
+        for (var docSnapshot in querySnapshot.docs) {
+          await deletedArtistSongCollection.doc(docSnapshot.id).delete();
+        }
+      });
+    });
+    user.uploadedSongs.remove(song);
+    notifyListeners();
+  }
+
+  void setSongList(List<dynamic> songList) {
+    this.tempSong = songList;
+    notifyListeners();
   }
 
   void fetchprofile() async {

@@ -1,23 +1,29 @@
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:rythm/providers/songProvider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:rythm/providers/songProvider.dart';
 
-// Future<List<SongProvider>> ftechSongsFromUser() async {
-//   List<SongProvider> songArr = [];
-
-//   QuerySnapshot songsSnapshot =
-//       await FirebaseFirestore.instance.collection('songs').get();
-//   songsSnapshot.docs.forEach((doc) {
-//     Map<String, dynamic> songData = doc.data() as Map<String, dynamic>;
-
-//     SongProvider song = SongProvider(
-//       id: doc.id,
-//       title: songData['song_name'],
-//       artist: songData['artist_name'],
-//       image: songData['image_url'],
-//       song: songData['song_url'],
-//       genre: songData['song_genre'],
-//     );
-//     songArr.add(song);
-//   });
-//   return songArr;
-// }
+Future<List<SongProvider>> fetchSongUser() async {
+  List<SongProvider> songList = [];
+  await FirebaseFirestore.instance
+      .collection('users')
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .collection('UserSongs')
+      .get()
+      .then((querySnapshot) async {
+    for (var docSnapshot in querySnapshot.docs) {
+      DocumentReference<Map<String, dynamic>> docRef =
+          docSnapshot.data()['Songs'];
+      var addSong = await docRef.get();
+      SongProvider song = SongProvider(
+        id: addSong.id,
+        title: addSong['song_name'],
+        artist: addSong['artist_name'],
+        image: addSong['image_url'],
+        song: addSong['song_url'],
+        genre: addSong['song_genre'],
+      );
+      songList.add(song);
+    }
+  });
+  return songList;
+}
