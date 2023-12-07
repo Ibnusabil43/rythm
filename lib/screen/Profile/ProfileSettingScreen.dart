@@ -23,16 +23,23 @@ class ProfileSetting extends StatefulWidget {
 class _ProfileSettingState extends State<ProfileSetting> {
   List<SongProvider> uploadedSong = [];
   bool _isEditing = false;
-  String _username = "Yanto";
+  String _username = "";
   TextEditingController _usernameController = TextEditingController();
   void initState() {
     super.initState();
-    _usernameController.text = _username; // Set nilai awal TextField
+    _loadUsername(); // Set nilai awal TextField
     super.initState();
     context.read<UsersProvider>().uploadedSongs = [];
     context.read<UsersProvider>().fetchSong();
 
     print("Songfetchuploaded");
+  }
+
+  void _loadUsername() {
+    setState(() {
+      _username = context.read<UsersProvider>().username;
+      _usernameController.text = _username;
+    });
   }
 
   File? selectedImage;
@@ -255,6 +262,9 @@ class _ProfileSettingState extends State<ProfileSetting> {
                                       setState(() {
                                         _username = _usernameController.text;
                                         //ISI ALGORITMA UPDATE FIREBASE DISINI
+                                        FirebaseAuth.instance.currentUser!
+                                            .updateDisplayName(
+                                                _usernameController.text);
                                       });
                                       //ISI ALGORITMA UPDATE FIREBASE DISINI KALO GA DIATAS
                                       Navigator.pop(context);
@@ -309,7 +319,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
                                 ),
                               ),
                               Text(
-                                "admin@gmail.com",
+                                context.watch<UsersProvider>().email,
                                 style: TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w200,
