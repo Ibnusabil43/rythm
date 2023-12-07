@@ -1,6 +1,8 @@
 // ignore_for_file: body_might_complete_normally_nullable
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:rythm/FtechFromFirebase/FetchSonginUser.dart';
 import 'package:rythm/providers/userProvider.dart';
@@ -262,9 +264,15 @@ class _ProfileSettingState extends State<ProfileSetting> {
                                       setState(() {
                                         _username = _usernameController.text;
                                         //ISI ALGORITMA UPDATE FIREBASE DISINI
-                                        FirebaseAuth.instance.currentUser!
-                                            .updateDisplayName(
-                                                _usernameController.text);
+                                        CollectionReference collRef =
+                                            FirebaseFirestore.instance
+                                                .collection("users");
+                                        collRef
+                                            .doc(FirebaseAuth
+                                                .instance.currentUser!.uid)
+                                            .update({
+                                          "username": _usernameController.text
+                                        });
                                       });
                                       //ISI ALGORITMA UPDATE FIREBASE DISINI KALO GA DIATAS
                                       Navigator.pop(context);

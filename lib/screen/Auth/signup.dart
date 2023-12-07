@@ -144,7 +144,7 @@ class _SignUpState extends State<SignUp> {
                           collRef.doc(user).set({
                             'email': email.text,
                             'username': username.text,
-                            'songUploaded': [],
+                            'ImageProfile': "",
                           });
                           final userLog =
                               await _auth.signInWithEmailAndPassword(
