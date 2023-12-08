@@ -137,19 +137,19 @@ class songSearchResult extends StatelessWidget {
     return Column(
       children: [
         Container(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              InkWell(
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return Play(
-                        listSong: songArr,
-                        song: filteredSongs[currIdx],
-                        currIndex: songArr.indexOf(filteredSongs[currIdx]));
-                  }));
-                },
-                child: Container(
+          child: InkWell(
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return Play(
+                    listSong: songArr,
+                    song: filteredSongs[currIdx],
+                    currIndex: songArr.indexOf(filteredSongs[currIdx]));
+              }));
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -189,9 +189,10 @@ class songSearchResult extends StatelessWidget {
                     ],
                   ),
                 ),
-              ),
-              Icon(Icons.more_vert_rounded, color: Color(0xFFD2AFFF), size: 30),
-            ],
+                Icon(Icons.play_circle_fill_rounded,
+                    color: Color(0xFFD2AFFF), size: 30),
+              ],
+            ),
           ),
         ),
         SizedBox(

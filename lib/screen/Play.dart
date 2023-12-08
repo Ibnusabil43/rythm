@@ -138,12 +138,12 @@ class _AudioPlayerScreenState extends State<Play> {
         ),
       ),
       body: Container(
-        padding: EdgeInsets.only(top: 40, bottom: 44, left: 20, right: 20),
+        padding: EdgeInsets.only(top: 40, bottom: 0, left: 20, right: 20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             SizedBox(
-              height: 40,
+              height: 20,
             ),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -197,7 +197,10 @@ class _AudioPlayerScreenState extends State<Play> {
             SizedBox(
               height: 60,
             ),
-            _addtoPlaylistButton()
+            _addtoPlaylistButton(),
+            SizedBox(
+              height: 20,
+            ),
           ],
         ),
       ),

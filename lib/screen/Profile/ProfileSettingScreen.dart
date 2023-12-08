@@ -532,6 +532,7 @@ class YourSong extends StatelessWidget {
                                   context.read<UsersProvider>().deleteSongUser(
                                       user: context.read<UsersProvider>(),
                                       song: iniListLagu);
+                                  Navigator.pop(context);
                                 },
                                 child: Row(
                                   children: [

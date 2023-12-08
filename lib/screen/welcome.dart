@@ -15,7 +15,7 @@ class _welcomeState extends State<welcome> {
     return Scaffold(
       backgroundColor: Color(0xFF1C1C27),
       body: Container(
-        padding: EdgeInsets.only(top: 315, bottom: 270, left: 51, right: 51),
+        padding: EdgeInsets.only(top: 315, bottom: 200, left: 51, right: 51),
         child: Center(
           child: Column(
             children: [

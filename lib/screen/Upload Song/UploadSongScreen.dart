@@ -31,13 +31,19 @@ class _UploadSongState extends State<UploadSong> {
   String? selectedAudioFileName;
   final storageRef = FirebaseStorage.instance.ref();
   var imageUrl, songUrl, docid, namagambar, namalagu;
-  // String fileImagepath = '';
-  // get target => fileImagepath.substring(fileImagepath.lastIndexOf('/') + 1);
-  // get imageref => FirebaseStorage.instance.ref().child('images/$target');
 
-  // DatabaseReference ref = FirebaseDatabase.instance.ref("songs");
-  // final imageref = FirebaseStorage.instance.ref().child('imagesSong.jpg');
-  // final songref = FirebaseStorage.instance.ref().child('songs');
+  void _resetForm() {
+    setState(() {
+      songName.clear();
+      artistName.clear();
+      genreName.clear();
+      selectedGenre = 'Pilih Genre';
+      selectedImage = null;
+      selectedImageFileName = null;
+      selectedAudioFile = null;
+      selectedAudioFileName = null;
+    });
+  }
 
   Future<void> getImage() async {
     final imagePicker = ImagePicker();
@@ -368,16 +374,7 @@ class _UploadSongState extends State<UploadSong> {
                             .doc(FirebaseAuth.instance.currentUser!.uid)
                             .collection("UserSongs")
                             .add({"Songs": Songref});
-                        setState(() {
-                          songName.text = '';
-                          artistName.text = '';
-                          genreName.text = '';
-                          selectedGenre = 'Pilih Genre';
-                          selectedImage = null;
-                          selectedImageFileName = null;
-                          selectedAudioFile = null;
-                          selectedAudioFileName = null;
-                        });
+                        _resetForm();
                         showDialog(
                           context: context,
                           builder: (context) {

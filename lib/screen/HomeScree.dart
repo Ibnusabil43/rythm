@@ -297,32 +297,32 @@ class lastPlayed extends StatelessWidget {
     return Column(
       children: [
         Container(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              InkWell(
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    //songArr = context.watch<SongProvider>().songArray;
-                    print(songArr);
-                    if (songArr.isNotEmpty && currIdx < songArr.length) {
-                      return Play(
-                        listSong: songArr,
-                        song: songArr[currIdx],
-                        currIndex: currIdx,
-                      );
-                    } else {
-                      // Handle the case where the list is empty or the index is out of bounds
-                      // You can show an error message or navigate to a default screen.
-                      return Scaffold(
-                        body: Center(
-                          child: Text('Error: Invalid index or empty list'),
-                        ),
-                      );
-                    }
-                  }));
-                },
-                child: Container(
+          child: InkWell(
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                //songArr = context.watch<SongProvider>().songArray;
+                print(songArr);
+                if (songArr.isNotEmpty && currIdx < songArr.length) {
+                  return Play(
+                    listSong: songArr,
+                    song: songArr[currIdx],
+                    currIndex: currIdx,
+                  );
+                } else {
+                  // Handle the case where the list is empty or the index is out of bounds
+                  // You can show an error message or navigate to a default screen.
+                  return Scaffold(
+                    body: Center(
+                      child: Text('Error: Invalid index or empty list'),
+                    ),
+                  );
+                }
+              }));
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -362,9 +362,10 @@ class lastPlayed extends StatelessWidget {
                     ],
                   ),
                 ),
-              ),
-              Icon(Icons.more_vert_rounded, color: Color(0xFFD2AFFF), size: 30),
-            ],
+                Icon(Icons.play_circle_fill_rounded,
+                    color: Color(0xFFD2AFFF), size: 30),
+              ],
+            ),
           ),
         ),
         SizedBox(
