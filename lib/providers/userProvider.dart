@@ -15,7 +15,7 @@ class UsersProvider extends ChangeNotifier {
   String email;
   String username;
   String password;
-  String profileImage;
+  String profileImageUrl;
   List<PlayListProvider> playListArr = [];
   List<SongProvider> uploadedSongs = [];
   List<dynamic> tempSong = [];
@@ -26,12 +26,23 @@ class UsersProvider extends ChangeNotifier {
     this.email = "",
     this.username = "",
     this.password = "",
-    this.profileImage = "",
+    this.profileImageUrl = "",
   });
 
   void setid(String uid) {
     this.id = uid;
     print(id);
+  }
+
+  void fetchImage() async {
+    final docprofile = FirebaseFirestore.instance.collection('users');
+    var doc = await docprofile.doc(id).get();
+
+    if (doc.exists) {
+      Map<String, dynamic> data = doc.data()!;
+      this.profileImageUrl = data['profileImageUrl'];
+      notifyListeners();
+    }
   }
 
   void fetchSong() async {
