@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:rythm/providers/GenreProvider.dart';
@@ -9,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rythm/PopUpWindow/popupScreen.dart';
 import 'package:rythm/providers/songProvider.dart';
+import 'package:uuid/uuid.dart';
 
 class UploadSong extends StatefulWidget {
   const UploadSong({super.key});
@@ -28,7 +30,7 @@ class _UploadSongState extends State<UploadSong> {
   File? selectedAudioFile;
   String? selectedAudioFileName;
   final storageRef = FirebaseStorage.instance.ref();
-  var imageUrl, songUrl, docid;
+  var imageUrl, songUrl, docid, namagambar, namalagu;
   // String fileImagepath = '';
   // get target => fileImagepath.substring(fileImagepath.lastIndexOf('/') + 1);
   // get imageref => FirebaseStorage.instance.ref().child('images/$target');
@@ -73,13 +75,20 @@ class _UploadSongState extends State<UploadSong> {
     String target = fileImagepath.substring(fileImagepath.lastIndexOf('/') + 1);
     final imageref = FirebaseStorage.instance.ref().child('images/$target');
     File file = File(fileImagepath);
+    final uuid = Uuid();
+    final uniqueId = uuid.v4();
+    var fileName = uniqueId.toString() + target;
+    final imageref2 = FirebaseStorage.instance.ref().child('images/$fileName');
     try {
-      await imageref.putFile(
+      await imageref2.putFile(
           file,
           SettableMetadata(
             contentType: 'image/jpeg',
           ));
-      imageUrl = await imageref.getDownloadURL();
+      imageUrl = await imageref2.getDownloadURL();
+      setState(() {
+        namagambar = fileName;
+      });
       print("URL IMAGE");
       print(imageUrl);
     } catch (e) {
@@ -126,13 +135,20 @@ class _UploadSongState extends State<UploadSong> {
     String target = filepath.substring(filepath.lastIndexOf('/') + 1);
     final songref = FirebaseStorage.instance.ref().child('songs/$target');
     File file = File(filepath);
+    final uuid = Uuid();
+    final uniqueId = uuid.v4();
+    var fileName = uniqueId.toString() + target;
+    final songref2 = FirebaseStorage.instance.ref().child('songs/$fileName');
     try {
-      await songref.putFile(
+      await songref2.putFile(
           file,
           SettableMetadata(
             contentType: 'audio/mpeg',
           ));
-      songUrl = await songref.getDownloadURL();
+      songUrl = await songref2.getDownloadURL();
+      setState(() {
+        namalagu = fileName;
+      });
       print("URL SONG");
       print(songUrl);
     } catch (e) {
@@ -337,20 +353,21 @@ class _UploadSongState extends State<UploadSong> {
                           "song_genre": genreName.text,
                           "image_url": imageUrl.toString(),
                           "song_url": songUrl.toString(),
+                          "ImageStorage": namagambar.toString(),
+                          "SongStorage": namalagu.toString(),
                         }).then(
                           (document) {
                             docid = document.id;
                           },
                         );
-                        var song = FirebaseFirestore.instance
-                            .collection('songs')
+                        var Songref = FirebaseFirestore.instance
+                            .collection("songs")
                             .doc(docid);
-                        var akun = FirebaseFirestore.instance
-                            .collection('users')
-                            .doc(FirebaseAuth.instance.currentUser!.uid);
-                        await akun.update({
-                          "songUploaded": FieldValue.arrayUnion([song])
-                        });
+                        await FirebaseFirestore.instance
+                            .collection("users")
+                            .doc(FirebaseAuth.instance.currentUser!.uid)
+                            .collection("UserSongs")
+                            .add({"Songs": Songref});
                         setState(() {
                           songName.text = '';
                           artistName.text = '';

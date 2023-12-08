@@ -1,7 +1,11 @@
 // ignore_for_file: body_might_complete_normally_nullable
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:rythm/FtechFromFirebase/FetchSonginUser.dart';
 import 'package:rythm/providers/userProvider.dart';
 import 'package:rythm/screen/welcome.dart';
 import 'package:rythm/providers/songProvider.dart';
@@ -20,20 +24,70 @@ class ProfileSetting extends StatefulWidget {
 }
 
 class _ProfileSettingState extends State<ProfileSetting> {
+  List<SongProvider> uploadedSong = [];
   bool _isEditing = false;
-  String _username = "Yanto";
+  String _username = "";
   TextEditingController _usernameController = TextEditingController();
   void initState() {
-    List<UsersProvider> uploadedSong = [];
     super.initState();
-    _usernameController.text = _username; // Set nilai awal TextField
+    _loadUsername(); // Set nilai awal TextField
     super.initState();
-    context.read<UsersProvider>().fetchSongUser();
+    context.read<UsersProvider>().uploadedSongs = [];
+    context.read<UsersProvider>().fetchSong();
+    context.read<UsersProvider>().fetchImage();
+
+    print("Songfetchuploaded");
+  }
+
+  void _loadUsername() {
+    setState(() {
+      _username = context.read<UsersProvider>().username;
+      _usernameController.text = _username;
+    });
   }
 
   File? selectedImage;
   String?
       selectedImageFileName; // Tambahkan variabel untuk nama file gambar terpilih
+
+  Future<void> uploadImageToFirebase() async {
+    if (selectedImage != null) {
+      try {
+        final storage = FirebaseStorage.instance;
+        final user = FirebaseAuth.instance.currentUser!;
+        final userDoc =
+            FirebaseFirestore.instance.collection("users").doc(user.uid);
+
+        // Fetch the current profile image URL
+        final currentProfileImageUrl =
+            (await userDoc.get()).data()?["profileImageUrl"] as String?;
+
+        // Delete the previous profile image if it exists
+        if (currentProfileImageUrl != null) {
+          try {
+            await storage.refFromURL(currentProfileImageUrl).delete();
+          } catch (deleteError) {
+            // Handle the case where the object is not found or deletion fails
+            print("Error deleting previous profile image: $deleteError");
+          }
+        }
+
+        // Upload the new profile image
+        final reference =
+            storage.ref().child("profile_images/${user.uid}_${DateTime.now()}");
+        await reference.putFile(
+            selectedImage!, SettableMetadata(contentType: "image/jpeg"));
+        final imageUrl = await reference.getDownloadURL();
+
+        // Update the user's profile in Firebase Firestore with the new image URL
+        await userDoc.update({"profileImageUrl": imageUrl});
+
+        print("Image uploaded successfully!");
+      } catch (e) {
+        print("Error uploading image: $e");
+      }
+    }
+  }
 
   Future<void> getImage() async {
     final imagePicker = ImagePicker();
@@ -49,15 +103,23 @@ class _ProfileSettingState extends State<ProfileSetting> {
           selectedImage = localImage;
           selectedImageFileName = imageFileName;
         });
+        await uploadImageToFirebase();
       } catch (e) {
         print('Error copying file: $e');
       }
     }
   }
 
-  void _initState() {
-    final user = context.read<UsersProvider>();
-    user.fetchSongUser();
+  Widget _buildProfileImage(BuildContext context) {
+    final profileImageUrl = context.watch<UsersProvider>().profileImageUrl;
+    return profileImageUrl != null
+        ? Image.network(
+            profileImageUrl,
+            width: 200,
+            height: 200,
+            fit: BoxFit.cover,
+          )
+        : Icon(Icons.person_rounded, size: 200, color: Color(0xFFD2AFFF));
   }
 
   @override
@@ -131,15 +193,21 @@ class _ProfileSettingState extends State<ProfileSetting> {
                       onTap: () async {
                         await getImage();
                       },
-                      child: selectedImage != null
+                      child: selectedImage != null ||
+                              context
+                                  .watch<UsersProvider>()
+                                  .profileImageUrl
+                                  .isNotEmpty
                           ? ClipRRect(
                               borderRadius: BorderRadius.circular(100),
-                              child: Image.file(
-                                selectedImage!,
-                                width: 200,
-                                height: 200,
-                                fit: BoxFit.cover,
-                              ),
+                              child: selectedImage != null
+                                  ? Image.file(
+                                      selectedImage!,
+                                      width: 200,
+                                      height: 200,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : _buildProfileImage(context),
                             )
                           : ClipRRect(
                               borderRadius: BorderRadius.circular(100),
@@ -256,6 +324,15 @@ class _ProfileSettingState extends State<ProfileSetting> {
                                       setState(() {
                                         _username = _usernameController.text;
                                         //ISI ALGORITMA UPDATE FIREBASE DISINI
+                                        CollectionReference collRef =
+                                            FirebaseFirestore.instance
+                                                .collection("users");
+                                        collRef
+                                            .doc(FirebaseAuth
+                                                .instance.currentUser!.uid)
+                                            .update({
+                                          "username": _usernameController.text
+                                        });
                                       });
                                       //ISI ALGORITMA UPDATE FIREBASE DISINI KALO GA DIATAS
                                       Navigator.pop(context);
@@ -310,7 +387,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
                                 ),
                               ),
                               Text(
-                                "admin@gmail.com",
+                                context.watch<UsersProvider>().email,
                                 style: TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w200,
@@ -344,13 +421,13 @@ class _ProfileSettingState extends State<ProfileSetting> {
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: context.watch<UsersProvider>().uploadedSong.length,
+                itemCount: context.watch<UsersProvider>().uploadedSongs.length,
                 itemBuilder: (context, index) {
                   if (index <
-                      context.watch<UsersProvider>().uploadedSong.length) {
+                      context.watch<UsersProvider>().uploadedSongs.length) {
                     return YourSong(
                       iniListLagu:
-                          context.watch<UsersProvider>().uploadedSong[index],
+                          context.watch<UsersProvider>().uploadedSongs[index],
                       currIdx: index,
                     );
                   }
@@ -383,10 +460,10 @@ class YourSong extends StatelessWidget {
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                     return Play(
-                        listSong: context.watch<UsersProvider>().uploadedSong,
+                        listSong: context.watch<UsersProvider>().uploadedSongs,
                         song: context
                             .watch<UsersProvider>()
-                            .uploadedSong[currIdx],
+                            .uploadedSongs[currIdx],
                         currIndex: currIdx);
                   }));
                 },
@@ -395,8 +472,8 @@ class YourSong extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       ClipRRect(
-                        child: Image.file(
-                          File(iniListLagu.image),
+                        child: Image.network(
+                          iniListLagu.image,
                           height: 60,
                           width: 60,
                           fit: BoxFit.cover,
@@ -452,6 +529,9 @@ class YourSong extends StatelessWidget {
                             InkWell(
                                 onTap: () {
                                   //PANGGIL DELETE SONG DISINI
+                                  context.read<UsersProvider>().deleteSongUser(
+                                      user: context.read<UsersProvider>(),
+                                      song: iniListLagu);
                                 },
                                 child: Row(
                                   children: [
