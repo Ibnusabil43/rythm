@@ -419,6 +419,9 @@ class _ProfileSettingState extends State<ProfileSetting> {
                 ),
               ],
             ),
+            SizedBox(
+              height: 5,
+            ),
             Expanded(
               child: ListView.builder(
                 itemCount: context.watch<UsersProvider>().uploadedSongs.length,
