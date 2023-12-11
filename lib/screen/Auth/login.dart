@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rythm/BottomNavBar/BottomNavigationBar.dart';
 import 'package:rythm/PopUpWindow/popupScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:rythm/screen/Auth/EmailFormForgotPass.dart';
 
 class LogIn extends StatefulWidget {
   const LogIn({super.key});
@@ -100,7 +101,26 @@ class _loginstate extends State<LogIn> {
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ForgotPassword()),
+                        );
+                      },
+                      child: Text(
+                        'Lupa Password?',
+                        style: TextStyle(
+                          color: Color(0xFFD2AFFF),
+                          fontSize: 16,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
                     SizedBox(
                       width: 86,
                     ),
