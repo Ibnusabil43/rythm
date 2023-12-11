@@ -8,6 +8,7 @@ import 'package:rythm/FtechFromFirebase/FtechPlaylistFromFirebase.dart';
 import 'package:rythm/PopUpWindow/popupScreen.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class addPlaylist extends StatefulWidget {
   const addPlaylist({super.key});
@@ -43,6 +44,14 @@ class _addPlaylistState extends State<addPlaylist> {
         print('Error copying file: $e');
       }
     }
+  }
+
+  void _showLoading() {
+    EasyLoading.show();
+  }
+
+  void _dismissLoading() {
+    EasyLoading.dismiss();
   }
 
   Future<void> UpImage() async {
@@ -230,6 +239,7 @@ class _addPlaylistState extends State<addPlaylist> {
                   children: [
                     InkWell(
                       onTap: () async {
+                        _showLoading();
                         if (namePlaylist.text.isEmpty ||
                             descPlaylist.text.isEmpty ||
                             selectedImage == null) {
@@ -253,6 +263,7 @@ class _addPlaylistState extends State<addPlaylist> {
 
                           Navigator.pop(context, "addPlaylist");
                           ftechPlaylistFromFirebase();
+                          _dismissLoading();
                         }
                       },
                       child: Container(

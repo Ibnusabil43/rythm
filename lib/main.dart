@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../providers/userProvider.dart';
 import '../providers/playlistProvider.dart';
 import '../providers/songProvider.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 Future<void> main() async {
   await JustAudioBackground.init(
@@ -26,6 +27,24 @@ Future<void> main() async {
   //);
   //fillSongList();
   runApp(const MyApp());
+  configLoading();
+}
+
+void configLoading() {
+  EasyLoading.instance
+    ..displayDuration = Duration(seconds: 3)
+    ..indicatorType = EasyLoadingIndicatorType.ring
+    ..indicatorColor = Color(0xFFD2AFFF)
+    ..loadingStyle = EasyLoadingStyle.custom
+    ..indicatorSize = 45.0 // Adjust the size of the loading indicator
+    ..radius = 10.0 // Adjust the radius of the loading indicator
+    ..maskColor =
+        Color(0xFFD2AFFF) // Set the background color of the loading overlay
+    ..backgroundColor =
+        Color(0xFF1C1C27) // Set the background color of the loading indicator
+    ..textColor = Colors.white // Set the text color
+    ..textStyle = TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)
+    ..userInteractions = false;
 }
 
 class MyApp extends StatelessWidget {
@@ -49,7 +68,8 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Rythm',
         theme: ThemeData(fontFamily: 'Poppins'),
-        home: main_screen(), // Gantilah Home() dengan widget utama Anda
+        home: main_screen(),
+        builder: EasyLoading.init(), // Gantilah Home() dengan widget utama Anda
       ),
     );
   }

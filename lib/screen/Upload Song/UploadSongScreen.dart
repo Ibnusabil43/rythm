@@ -11,6 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:rythm/PopUpWindow/popupScreen.dart';
 import 'package:rythm/providers/songProvider.dart';
 import 'package:uuid/uuid.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class UploadSong extends StatefulWidget {
   const UploadSong({super.key});
@@ -160,6 +161,14 @@ class _UploadSongState extends State<UploadSong> {
     } catch (e) {
       print('Error copying file: $e');
     }
+  }
+
+  void _showLoading() {
+    EasyLoading.show();
+  }
+
+  void _dismissLoading() {
+    EasyLoading.dismiss();
   }
 
   @override
@@ -333,6 +342,7 @@ class _UploadSongState extends State<UploadSong> {
                 children: [
                   InkWell(
                     onTap: () async {
+                      _showLoading();
                       if (songName.text.isEmpty ||
                           genreName.text.isEmpty ||
                           artistName.text.isEmpty ||
@@ -384,6 +394,7 @@ class _UploadSongState extends State<UploadSong> {
                           },
                         );
                       }
+                      _dismissLoading();
                     },
                     child: Container(
                       width: 150,
