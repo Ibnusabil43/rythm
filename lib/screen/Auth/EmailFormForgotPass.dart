@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:rythm/PopUpWindow/popupScreen.dart';
 
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({super.key});
@@ -71,7 +73,46 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               InkWell(
-                onTap: () {},
+                onTap: () async {
+                  if (email.text.isNotEmpty) {
+                    try {
+                      await FirebaseAuth.instance
+                          .sendPasswordResetEmail(email: email.text);
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return popUpWarning(
+                            errorMessage:
+                                "Email reset password berhasil dikirim ke ${email.text}",
+                            status: "success",
+                          );
+                        },
+                      );
+                    } on FirebaseAuthException catch (e) {
+                      if (e.code == 'user-not-found') {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return popUpWarning(
+                              errorMessage: "Email tidak terdaftar",
+                              status: "error",
+                            );
+                          },
+                        );
+                      } else if (e.code == 'invalid-email') {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return popUpWarning(
+                              errorMessage: "Email tidak valid",
+                              status: "error",
+                            );
+                          },
+                        );
+                      }
+                    }
+                  }
+                },
                 child: Container(
                   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   child: Center(
