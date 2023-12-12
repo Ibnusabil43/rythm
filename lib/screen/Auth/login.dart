@@ -130,6 +130,11 @@ class _loginstate extends State<LogIn> {
                           showSpinner = true;
                         });
                         try {
+                          if (email.text.isEmpty) {
+                            throw Exception("Email Tidak Boleh Kosong");
+                          } else if (password.text.isEmpty) {
+                            throw Exception("Password Tidak Boleh Kosong");
+                          }
                           final user = await _auth.signInWithEmailAndPassword(
                               email: email.text, password: password.text);
                           if (user != null) {
@@ -143,9 +148,23 @@ class _loginstate extends State<LogIn> {
                             showSpinner = false;
                           });
                         } catch (e) {
+                          print("Error Login");
                           print(e);
-                          String finalErrorMessage =
-                              "Email atau Password Salah";
+                          String errorMessage = e.toString();
+                          String finalErrorMessage = "";
+                          if (errorMessage.contains(
+                              "The email address is badly formatted")) {
+                            finalErrorMessage = "Penulisan Email Salah";
+                          } else if (errorMessage
+                              .contains("INVALID_LOGIN_CREDENTIALS")) {
+                            finalErrorMessage = "Email atau Password Salah";
+                          } else if (errorMessage
+                              .contains("Email Tidak Boleh Kosong")) {
+                            finalErrorMessage = "Email Tidak Boleh Kosong";
+                          } else if (errorMessage
+                              .contains("Password Tidak Boleh Kosong")) {
+                            finalErrorMessage = "Password Tidak Boleh Kosong";
+                          }
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
