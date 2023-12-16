@@ -28,7 +28,7 @@ class PlayListProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void ftechSonginPlaylistFromFirebase() async {
+  Future<void> ftechSonginPlaylistFromFirebase() async {
     final collection = FirebaseFirestore.instance.collection('songs');
     if (this.tempSong.isEmpty) {
       this.songList = [];
@@ -48,7 +48,7 @@ class PlayListProvider extends ChangeNotifier {
     }
   }
 
-  void fetchplaylistid(String id) async {
+  Future<void> fetchplaylistid(String id) async {
     print("ID ftechplaylistid");
     print(id);
     var ref = FirebaseFirestore.instance.collection('songs');
