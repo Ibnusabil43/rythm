@@ -34,7 +34,7 @@ class UsersProvider extends ChangeNotifier {
     print(id);
   }
 
-  void fetchImage() async {
+  Future<void> fetchImage() async {
     final docprofile = FirebaseFirestore.instance.collection('users');
     var doc = await docprofile.doc(id).get();
 
@@ -45,7 +45,7 @@ class UsersProvider extends ChangeNotifier {
     }
   }
 
-  void fetchSong() async {
+  Future<void> fetchSong() async {
     List<SongProvider> uploadedSong = await fetchSongUser();
     for (var i = 0; i < uploadedSong.length; i++) {
       uploadedSongs.add(SongProvider(
